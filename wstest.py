@@ -6,81 +6,57 @@ from websockets.server import serve
 
 # 测试事件数据
 test_events = [
-    [
-    "EVENT",
-    "840d1efe-9df7-423b-a3ba-d1ebac97abb1",
-    {
-        "content": "2117",
-        "created_at": 1736496186,
-        "id": "cf159af242803f1eaea6fbd65f24481f62f1e526beb0efd17ba8c4f2923b02a2",
-        "kind": 1,
-        "pubkey": "ef57b4986a2c659965c3df95ca3fea3533a207b09bf2c55a70d406c7d0491250",
-        "sig": "8f51e15b023c83cbfe0676366c8f12c184c7727407dd5ef854ed250852f7cbade2ab48b2969dda83f61c70a78b8a77c7f9c7ab20eb718125b57ef3dd54e12321",
-        "tags": [
-            # ["e", "c2f8d21ac8be14592f06991a34dc8aa7835eb0c569ed1d084dd2c78cb84abf96", "wss://nostr.einundzwanzig.space", "mention"],
-                ["t", "staySAIF"]
-        ]
-    }
-    # {
-    #     "content": "first",
-    #     "created_at": 1736477404,
-    #     "id": "b1f8d19545dadd2802e0a474927ae81f90f7228222f0c2dbc774ff07b182bbdd",
-    #     "kind": 1,
-    #     "pubkey": "df57b4986a2c659965c3df95ca3fea3533a207b09bf2c55a70d406c7d049124f",
-    #     "sig": "4e1452d4e0d2f2d72cbe6f87b041ee449526448df97a51c7e06f615043208d99ee41b04267df317b0c0597f5d5cc118160531f5edb97c34517a2ea3281db5f54",
-    #     # "tags": [
-    #     # ["p", "460c25e682fda7832b52d1f22d3d22b3176d972f60dcdc3212ed8c92ef85065c", "", "mention"]
-    #     # ]
-    # }
-    ],
-    [
-        "EVENT",
-        "840d1efe-9df7-423b-a3ba-d1ebac97abb1",
-        {
-            "content": "2118",
-            "created_at": 1736496191,
-            "id": "b203958795e76ba9b934e75b12e75e5c4aff6c4c84c61a0c005d7a3987659342",
-            "kind": 1,
-            "pubkey": "bf57b4986a2c659965c3df95ca3fea3533a207b09bf2c55a70d406c7d0491250",
-            "sig": "6f0c01dc9d6ada2256a2c1f0e2c60c563d61d33b30fa133d4ed56972d7e038bfeabdad3ee1d7f95493872b2b592f69604282d84ca2aeb8f953245d8f4ef72506",
-            # "tags": [
-            #     # ["e", "c2f8d21ac8be14592f06991a34dc8aa7835eb0c569ed1d084dd2c78cb84abf96", "wss://nostr.einundzwanzig.space", "root"],
-            #     ["p", "dd664d5e4016433a8cd69f005ae1480804351789b59de5af06276de65633d319"]
-            # ]
-            "tags": [
-                ["t", "staySAIF"]
-            ]
-        }
-        # {
-        #     "content": "second.\n\nhttps://cdn.yandere.love/6e/6c/79/6e6c793fc7f4979e49a9a3ad62b22f3fdbc913812d478ee06d6456c63b7dccb6.jpg",
-        #     "created_at": 1736477397,
-        #     "id": "71445ad2a4759ae75ab8d4a767e8f6f8d5054b38871658ff7442425853780fc1",
-        #     "kind": 1,
-        #     "pubkey": "df57b4986a2c659965c3df95ca3fea3533a207b09bf2c55a70d406c7d049124f",
-        #     "sig": "8c4d44a34f2cf3bb96b0cef35882ba86f3ea6e0715415b3d3d35345faa7f785503d1d220f58127acde4a1edb44e2f7d9b733ab11919acda5810c0d1dfee4f656",
-        #     # "tags": [
-        #     # ["imeta", "url https://cdn.yandere.love/6e/6c/79/6e6c793fc7f4979e49a9a3ad62b22f3fdbc913812d478ee06d6456c63b7dccb6.jpg", "m image/jpeg"],
-        #     # ["proxy", "https://misskey.yandere.love/objects/0ed36537-cbbb-41f7-be41-f20e9fe61da9", "activitypub"]
-        #     # ]
-        # }
-        ],
-        # [
-        #     "EVENT",
-        #     "840d1efe-9df7-423b-a3ba-d1ebac97abb1",
-        # {
-        #     "content": "2119",
-        #     "created_at": 1736496193,
-        #     "id": "6f0702598ee8dc290876134fed82301d97507f1bc51cb2383cb8b7c7814613b8",
-        #     "kind": 1,
-        #     "pubkey": "df57b4986a2c659965c3df95ca3fea3533a207b09bf2c55a70d406c7d0491248",
-        #     "sig": "77539499be3129ada4e6cc8e2c9ffde78cee7bc0784d7b3c3b03588c936f78edf2cd1b6d647e4a2991bd307928848655fd0c17f0c1da4caf90a7126f841baf9c",
-        #     "tags": [
-        #         # ["e", "c2f8d21ac8be14592f06991a34dc8aa7835eb0c569ed1d084dd2c78cb84abf96", "wss://nostr.einundzwanzig.space", "root"],
-        #         ["p", "dd664d5e4016433a8cd69f005ae1480804351789b59de5af06276de65633d319"]
-        #     ]
-        #     }]
+['EVENT', 'd892cae1-ec57-4087-86b5-ea5e3937b25c', {'kind': 2410, 'id': 'de5d7b9f699096a320bf1351ae76d346e8caa9f4a212367bcdb6e02238c11b26', 'pubkey': '79dff8f82963424e0bb02708a22e44b4980893e3a4be0fa3cb60a43b946764e3', 'created_at': 1738277694, 'tags': [['LamportID', '1'], ['vote_id', 'a6d73ab3-ba70-4490-88d6-8c645a49fc19'], ['title', 'test3'], ['content', '6 vote for test3'], ['start_time', '2025-01-31 10:31:58.293877 +00:00'], ['end_time', '2025-02-03 08:00:00 +00:00'], ['options', 'For,Against,Abstain'], ['sig', '']], 'content': '6 Vote a6d73ab3-ba70-4490-88d6-8c645a49fc19, Title:test3', 'sig': '879eb383276313493f249a14c30c029a3fda84c8b29423a8ac6b06bd2fcc76505fa6b2781f23fdc56eac64c131f5053650f0469abd1b71ca0b8c56c8de9246c1', 'uday_nonce': 46306}],
+['EVENT', 'd892cae1-ec57-4087-86b5-ea5e3937b25c', {'kind': 2411, 'id': '201779ecde72a46db6c38e8d8ec4f26812ec767a868e6904c158f23a6b6e1a93', 'pubkey': '79dff8f82963424e0bb02708a22e44b4980893e3a4be0fa3cb60a43b946764e3', 'created_at': 1738377691, 'tags': [['LamportID', '1'], ['vote_id', 'a6d73ab3-ba70-4490-88d6-8c645a49fc19'], ['title', 'test2'], ['content', '6 vote for test2'], ['start_time', '2025-01-31 13:24:05.128740 +00:00'], ['end_time', '2025-02-04 08:00:00 +00:00'], ['options', 'For,Against,Abstain'], ["selection", "For"], ['sig', '']], 'content': '6 Vote cb91a1a4-5624-408c-819f-f8597c0ebbf1, Title:test2', 'sig': 'c1330a82934cd082333554e60ead0798e42724aa77cc3af0cf2312a5761c258d161800bdafb67d6c8085b6acf78bbe7bc76552e934b9cf09152b103a07b13e42', 'uday_nonce': 46305}],
+['EVENT', 'd892cae1-ec57-4087-86b5-ea5e3937b25c', {'kind': 2411, 'id': 'd6fa29a4917dfc406f8bec1ddb523b6cc190ca8b55d4b60b5215cf92f508b66f', 'pubkey': '79dff8f82963424e0bb02708a22e44b4980893e3a4be0fa3cb60a43b946764e3', 'created_at': 1738377635, 'tags': [['LamportID', '3'], ['vote_id', 'a6d73ab3-ba70-4490-88d6-8c645a49fc19'], ['title', 'test3'], ['content', '6 vote for test3'], ['start_time', '2025-01-31 13:46:51.408563 +00:00'], ['end_time', '2025-02-03 13:46:39 +00:00'], ['options', 'For,Against,Abstain'], ["selection", "Against"], ['sig', '']], 'content': '6 Vote 8d76a727-4a8b-4350-9a13-e02482a84623, Title:test3', 'sig': '49a9faa60f7c1168f128a34d6981e6e2b442ed3af3531de2fc0723c64134a20c732a61c23a2bfe11177ccf7db5c2974ae16d391c6f556456daf8133ed33bf496', 'uday_nonce': 46304}],
+['EVENT', 'd892cae1-ec57-4087-86b5-ea5e3937b25c', {'kind': 2411, 'id': '5fb7c7d45becc661cce6bee396586e911f8c8dd16f0c29df83daed905a1236a8', 'pubkey': '79dff8f82963424e0bb02708a22e44b4980893e3a4be0fa3cb60a43b946764e3', 'created_at': 1738329887, 'tags': [['LamportID', '4'], ['vote_id', 'a6d73ab3-ba70-4490-88d6-8c645a49fc19'], ['title', 'test1'], ['content', '1 vote for test1'], ['start_time', '2025-01-31 13:24:32.982145 +00:00'], ['end_time', '2025-02-04 08:00:00 +00:00'], ['options', 'For,Against,Abstain'], ["selection", "Against"], ['sig', '']], 'content': '1 Vote 4206cc82-990d-40ec-b75f-43647d1b7564, Title:test1', 'sig': '3d530aee3f82adaa1e4289c7525eb9557250bde73f15cf94baad0796ab710173b7c72274b0981596e9e8eede026a7515281ca130831c4c38a450f3bb034058bb', 'uday_nonce': 46302}],
+['EVENT', 'd892cae1-ec57-4087-86b5-ea5e3937b25c', {'kind': 2411, 'id': 'd993cc394c6bbaa86f5e308b2f8239c0f9882168a7539159a61292ed7ccea435', 'pubkey': '79dff8f82963424e0bb02708a22e44b4980893e3a4be0fa3cb60a43b946764e3', 'created_at': 1738329861, 'tags': [['LamportID', '5'], ['vote_id', 'a6d73ab3-ba70-4490-88d6-8c645a49fc19'], ['title', 'test2'], ['content', '1 vote for test2'], ['start_time', '2025-01-31 13:24:05.128740 +00:00'], ['end_time', '2025-02-04 08:00:00 +00:00'], ['options', 'For,Against,Abstain'], ["selection", "Abstain"], ['sig', '']], 'content': '1 Vote 40d1e7ac-f631-42c0-9c4b-8abe06501311, Title:test2', 'sig': 'edac8c530ac6550d1629351dbc14d67f19e9b21b83e388a41c83a87fed871e341172648cc73ded2193c74f4d8bdee0364a45caa3cf44b34fdce281601bf396e3', 'uday_nonce': 46301}]
+
 ]
 
+test_events = [
+['EVENT', '0773887e-0061-4cb1-8772-2e375c88f7ad', {'kind': 2323, 'id': '7ee1e233011c573b0a3974313694857f45336870fc0827c3a890d03ebc0ccfd8', 'pubkey': 'b3ed835ef25d8b3843ec991fc51cda06d09ecee22f8147865050323049d560ae', 'created_at': 1737982742, 'tags': [['i', 'invite'], ['LamportId', '150'], ['invitee', '9827888'], ['p', 'hetu2'], ['lmport_type', 'invite']], 'content': '150 邀请 9827', 'sig': 'aeef53c6144eea9a60e2492a1edaab7dfceedf9f7fba26b838635f0b22ac815d88f7c63e2354e3b4e57946d6944667c88d3a3d00486d9d795b6a9875135dc2fe', 'uday_nonce': 43182}]
+]
+
+test_events = [
+    ['EVENT','0773887e-0061-4cb1-8772-2e375c88f7ad',    
+     {
+        "id": "b7f69c3dffacb073233cc293b2e24c02cfef1761a1e5e98b054ec456d349c71f",
+        "pubkey": "abcd1234ef567890abcd1234ef567890abcd1234ef567890abcd1234ef567890",
+        "created_at": 1707075265,
+        "kind": 3,
+        "tags": [
+            ["p", "ef567890abcd1234ef567890abcd1234ef567890abcd1234ef567890abcd1234"],
+            ["p", "1234abcd5678ef901234abcd5678ef901234abcd5678ef901234abcd5678ef90"],
+            ["p", "7890ef1234abcd567890ef1234abcd567890ef1234abcd567890ef1234abcd56"]
+        ],
+        "sig": "d01234abcd5678ef901234abcd5678ef901234abcd5678ef901234abcd5678ef901234abcd5678ef901234abcd5678ef901234abcd5678ef90"
+    }
+    ]
+]
+
+
+
+test_events = [
+    ['EVENT','0773887e-0061-4cb1-8772-2e375c88f7ad',    
+        {
+            "id": "a1b2c3d4e5f67890abcdef1234567890abcdef1234567890abcdef1234567890",
+            "pubkey": "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890",
+            "created_at": 1707075265,
+            "kind": 6,
+            "tags": [
+                ["t", "twitter"],
+                ["account", "elonmusk"],
+                ["user_id", "987654321"],
+                ["username", "crypto_fan"],
+                ["created_at", "1707075260"],
+                ["post_id", "1234567890abcdef"]
+            ],
+            "content": "",
+            "sig": "abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890"
+        }
+    ]
+]
 # WebSocket 服务逻辑
 async def nostr_relay(websocket):
     print("Client connected")

@@ -6,7 +6,7 @@ import pydgraph
 import websocket as websocket_client
 import requests
 import uuid
-from flask_cors import CORS
+
 # Dgraph 连接配置
 DGRAPH_URI = "144.126.138.135:9080"  # Dgraph Alpha 的 gRPC 
 
@@ -46,65 +46,6 @@ def query_user(pubkey):
     except Exception as e:
         print(f"查询 User 节点失败: {e}")
         return None
-
-def query_user_by_account(platform, account):
-    query = {
-        "query": """
-        {
-            user(func: eq(account, "%s")) @filter(eq(platform, "%s")) {
-                uid
-                dgraph.type
-                pubkey
-                posts {
-                    uid
-                }
-                mentioned_by {
-                    uid
-                }
-            }
-        }
-        """ % (account, platform)
-    }
-
-    try:
-        response = requests.post(query_url, headers=headers, data=json.dumps(query))
-        response.raise_for_status()  # 检查请求是否成功
-        result = response.json()
-        user = result.get("data", {}).get("user", [])
-        if user:
-            return user[0] 
-        else:
-            return None  # User 节点不存在
-    except Exception as e:
-        print(f"查询 User 节点失败: {e}")
-        return None
-
-def query_post_by_account(platform, post_id):
-    query = {
-        "query": """
-        {
-            post(func: eq(post_id, "%s")) @filter(eq(platform, "%s")) {
-                uid
-                dgraph.type
-                id
-            }
-        }
-        """ % (post_id, platform)
-    }
-
-    try:
-        response = requests.post(query_url, headers=headers, data=json.dumps(query))
-        response.raise_for_status()  # 检查请求是否成功
-        result = response.json()
-        user = result.get("data", {}).get("post", [])
-        if user:
-            return user[0] 
-        else:
-            return None  # User 节点不存在
-    except Exception as e:
-        print(f"查询 User 节点失败: {e}")
-        return None
-
 
 def query_project(project_name):
     query = {
@@ -280,7 +221,7 @@ client = pydgraph.DgraphClient(client_stub)
 # Nostr Relay 的 WebSocket 地址
 RELAY_URL = "ws://144.126.138.135:10547"
 RELAY_URL = "ws://localhost:8765"
-# RELAY_URL = "ws://144.126.138.135:10548"
+RELAY_URL = "ws://144.126.138.135:10548"
 
 
 # WebSocket 事件处理
@@ -290,11 +231,7 @@ def on_message(ws, message):
         data = json.loads(message)
         if data[0] == 'EVENT':
             _, describe_id, event = data
-            # print("Received event:", event)
-            # print("Received data:", data)
-            print(data)
-
-
+            print("Received event:", event)
             save_event_to_dgraph(describe_id,event)
     # except Exception as e:
     #     print("Error parsing message:", e)
@@ -450,39 +387,6 @@ def save_event_to_dgraph(describe_id, event):
             ]
         }
         insert_dgraph(mutation, info='follow')
-    elif event["kind"] == 6: 
-        id = event["id"]
-        pubkey = event["pubkey"]
-        
-        # created_at = event["created_at"]
-        for tag in event.get("tags", []):
-            if tag[0] == 't':
-                platform = tag[1]
-            if tag[0] == 'account':
-                account = tag[1]
-            if tag[0] == 'post_id':
-                post_id = tag[1]
-            if tag[0] == 'created_at':
-                created_at = tag[1]
-        user_data = query_user_by_account(platform, account)
-        post_data = query_post_by_account(platform, post_id)
-        mutation = {
-            "set": [
-                {
-                    "uid": user_data['uid'] if user_data else "_:user",
-                    "dgraph.type": "User",
-                    "pubkey": event["pubkey"],
-                    "created_at": created_at,
-                    "retweet": [{post_data['uid'] if post_data else "uid": "_:post"}] + (
-                            [{"uid": post["uid"]} for post in user_data["retweet"]]
-                            if user_data and "retweet" in user_data
-                            else []
-                        ) 
-                }
-            ]
-        }
-        insert_dgraph(mutation, info='retweet')
-
     elif event["kind"] == 2321:
         user_data = query_user(event["pubkey"])
         print('111111')
@@ -553,158 +457,20 @@ def save_event_to_dgraph(describe_id, event):
         invite_data = query_id(event["id"])
         if invite_data:
             print(f"invite event have created")
-            return  
+            # return  
 
-        mutation = {
-            "set": [
-                {
-                    "uid": "_:invite",
-                    "dgraph.type": "Invite",
-                    "id": event["id"],
-                    "created_at": event.get("created_at")
-                }
-            ]
-        }
-        print(mutation)
-        insert_dgraph(mutation)
-        for tag in event.get("tags", []):
-            if tag[0] == 'LamportId':
-                inviter = tag[1]
-            if tag[0] == 'p':
-                project_name = tag[1]
-            if tag[0] == 'invitee':
-                invitee = tag[1]
-        inviter_data = query_lamport(inviter)
-        invitee_data = query_lamport(invitee)
-
-        project_data = query_project(project_name)
-        if not project_data:
-            print(f"project event have not created!")
-            return  
-
-        print(inviter_data)
-        mutation = {
-            "set": [
-                {
-                    "uid": inviter_data['uid'] if inviter_data else "_:inviter",
-                    "lamport_id": inviter,
-                    "dgraph.type": "User",
-                    "invite|facets": [{
-                                "nostr_id": event["id"],  
-                                "project_name": project_name,
-                                "content": event.get("content"),
-                                "created_at": event.get("created_at"),
-                            }] + 
-                                (
-                                [invite for invite in invitee_data["invite|facets"]]
-                                if invitee_data and "invite|facets" in invitee_data
-                                else []
-                            ),
-                    "~invite|facets": [{
-                                "nostr_id": event["id"],  
-                                "project_name": project_name,
-                                "content": event.get("content"),
-                                "created_at": event.get("created_at"),
-                            }] + 
-                                (
-                                [invite for invite in invitee_data["~invite|facets"]]
-                                if invitee_data and "~invite|facets" in invitee_data
-                                else []
-                            ),
-                    "invite": [
-                        {
-                            "uid": invitee_data['uid'] if invitee_data else "_:invitee",
-                            "dgraph.type": "User",
-                            "lamport_id": invitee,
-                            "~invite|facets":{
-                                "nostr_id": event["id"],  
-                                "project_name": project_name,
-                                "content": event.get("content"),
-                                "created_at": event.get("created_at"),
-                            },
-                            "participates_in": [{"uid": project_data['uid']}] + (
-                                [{"uid": participates_in["uid"]} for participates_in in invitee_data["participates_in"]]
-                                if invitee_data and "participates_in" in invitee_data
-                                else []),
-                        }
-                        ]
-                         + (
-                            [invite for invite in invitee_data["invite"]]
-                            if invitee_data and "invite" in invitee_data
-                            else []
-                         )
-                }
-            ]
-        }
-        print(mutation)
-        insert_dgraph(mutation)
-    
-    elif event["kind"] == 2410:
-        vote_data = query_id(event["id"])
-        if vote_data:
-            print(f"vote event have created")
-            return  
-
-        for tag in event.get("tags", []):
-            if tag[0] == 'LamportID':
-                created_voter = tag[1]
-            if tag[0] == 'vote_id':
-                vote_id = tag[1]
-            if tag[0] == 'title':
-                title = tag[1]
-            if tag[0] == 'content':
-                content = tag[1]
-            if tag[0] == 'options':
-                options = tag[1].split(',')
-        created_voter_data = query_lamport(created_voter)
-        print(created_voter_data)
-        if not created_voter_data:
-            print(f"vote creator have created")
-            return     
-        mutation = {
-            "set": [
-                {
-                    "uid": "_:vote",
-                    "dgraph.type": "Vote",
-                    "id": event["id"],
-                    "created_at": event.get("created_at"),
-                    "vote_id": vote_id,
-                    "vote_title": title,
-                    "content": content,
-                    "vote_options": options,
-                },
-                {
-                    "uid": created_voter_data['uid'],
-                    "dgraph.type": "User",
-                    "create_votes": [{"uid": "_:vote"}] + (
-                                [{"uid": create_vote["uid"]} for create_vote in created_voter_data["create_votes"]]
-                                if created_voter_data and "create_votes" in created_voter_data
-                                else []),
-                    
-                }
-            ]
-        }
-        print(mutation)
-        insert_dgraph(mutation)
-    
-    elif event["kind"] == 24111:
-        invite_data = query_id(event["id"])
-        if invite_data:
-            print(f"invite event have created")
-            return  
-
-        mutation = {
-            "set": [
-                {
-                    "uid": "_:inviter",
-                    "dgraph.type": "Invite",
-                    "id": event["id"],
-                    "created_at": event.get("created_at")
-                }
-            ]
-        }
-        print(mutation)
-        insert_dgraph(mutation)
+        # mutation = {
+        #     "set": [
+        #         {
+        #             "uid": "_:inviter",
+        #             "dgraph.type": "Invite",
+        #             "id": event["id"],
+        #             "created_at": event.get("created_at")
+        #         }
+        #     ]
+        # }
+        # print(mutation)
+        # insert_dgraph(mutation)
         for tag in event.get("tags", []):
             if tag[0] == 'LamportId':
                 inviter = tag[1]
@@ -754,12 +520,6 @@ def save_event_to_dgraph(describe_id, event):
                             "uid": invitee_data['uid'] if invitee_data else "_:invitee",
                             "dgraph.type": "User",
                             "lamport_id": invitee,
-                            "~invite|facets":{
-                                "nostr_id": event["id"],  
-                                "project_name": project_name,
-                                "content": event.get("content"),
-                                "created_at": event.get("created_at"),
-                            },
                             "participates_in": [{"uid": project_data['uid']}] + (
                                 [{"uid": participates_in["uid"]} for participates_in in invitee_data["participates_in"]]
                                 if invitee_data and "participates_in" in invitee_data
@@ -776,10 +536,6 @@ def save_event_to_dgraph(describe_id, event):
         }
         print(mutation)
         insert_dgraph(mutation)
-    
-
-    
-    
     elif event['kind']== 30050:
 
         project_data = query_id(event["id"])
@@ -878,7 +634,7 @@ threading.Thread(target=start_websocket, daemon=True).start()
 
 # 创建 Flask 应用并集成 GraphQL
 app = Flask(__name__)
-CORS(app)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

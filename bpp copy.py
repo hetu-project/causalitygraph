@@ -7,7 +7,6 @@ import websocket as websocket_client
 from ariadne import QueryType, make_executable_schema
 import requests
 from ariadne.wsgi import GraphQL
-from flask_cors import CORS
 
 DGRAPH_URI = "144.126.138.135:9080"  # Dgraph Alpha 的 gRPC 
 
@@ -22,6 +21,7 @@ def search_users(search_value = None):
         user(func: %s) {
             uid
             dgraph.type
+            id
             content
             name
             lamport_id
@@ -31,10 +31,13 @@ def search_users(search_value = None):
             eth_address
             posts {
                 uid
+                id
                 content
             }
             invite @facets {
                 uid
+                dgraph.type
+                pubkey
                 lamport_id
                 facets {
                     project_name
@@ -44,6 +47,8 @@ def search_users(search_value = None):
             }
             ~invite @facets {
                 uid
+                dgraph.type
+                pubkey
                 lamport_id
                 facets: {
                     project_name
@@ -54,10 +59,7 @@ def search_users(search_value = None):
             participates_in {
                 uid
                 project_name
-            }
-            create_votes {
-                uid
-                lamport_id
+                dgraph.type
             }
         }
     }
@@ -65,8 +67,8 @@ def search_users(search_value = None):
     
     if search_value:
         func_condition = f'or(eq(lamport_id, {search_value}), eq(twitter_id, {search_value}), eq(eth_address, {search_value}))'
-        func_condition = f'eq(eth_address, {search_value})'
-        func_condition = f'uid({search_value})'
+        func_condition = f'eq(lamport_id, {search_value})'
+
     else:
         func_condition = 'type(User)'
     
@@ -85,7 +87,7 @@ def search_users(search_value = None):
         response = requests.post(url, headers=headers, data=json.dumps(query))
         response.raise_for_status() 
         result = response.json()
-        # print(result)
+        print(result)
         edges = []
         users = []
         nodes = result.get("data", {}).get("user", [])
@@ -99,24 +101,30 @@ def search_users(search_value = None):
                 lamport_id = node.get('lamport_id')
                 twitter_id = node.get('twitter_id')
                 eth_address = node.get('eth_address')
+                projects = []
+                print(f"节点 UID: {uid}, 类型: {node_type}")
                 event =set()
-                user_detail = {}
-                user_detail = {'pubkey':pubkey, 'content':content, 'created_at':created_at, 'lamport_id':lamport_id, 'twitter_id':twitter_id, 'eth_address':eth_address,}
-
                 for predicate, value in node.items():
-                    if predicate in ['posts', 'invite', 'create_votes']:
-                        user_detail[predicate] = node[predicate]
+                    if predicate in ['posts', 'invite', 'participates_in']:
                         event.add(predicate)
                         for one_value in value:
-                            one_edge = {"uid": f"{uid}_{one_value['uid']}", 'source':uid, 'target':one_value['uid'], 'category':predicate}
+                            print(one_value)
+                            print(f"边: {uid} -> {one_value['uid']} , one_value\n{one_value}")
+                            one_edge = {"id": f"{uid}_{one_value['uid']}", 'source':uid, 'target':one_value['uid'],'label':one_value['uid'], 'category':predicate}
                             edges.append(one_edge)
+                            if 'project_name' in one_value:
+                                one_edge['project_name'] = one_value['project_name']
+                            if 'facets' in one_value and 'project_name' in one_value['facets']:
+                                one_edge['project_name'] = one_value['facets']['project_name']
+                            if predicate =='participates_in':
+                                projects.append(one_value['project_name'])
                 
-                user_detail['event_type'] =list(event)
-                one_user = {'uid':uid, 'category':node_type, 'label':lamport_id, 'detail':user_detail}
+                user_detail = {'pubkey':pubkey, 'content':content, 'created_at':created_at, 'lamport_id':lamport_id, 'twitter_id':twitter_id, 'eth_address':eth_address, 'event_type':list(event), 'projects':projects }
+                one_user = {'id':uid, 'category':node_type, 'label':lamport_id, 'detail':user_detail}
                 users.append(one_user)
-            # print("查询成功，返回的帖子及其提到的用户数据:")
-            # print(edges)
-            # print(users)
+            print("查询成功，返回的帖子及其提到的用户数据:")
+            print(edges)
+            print(users)
             return users, edges
             # print(json.dumps(nodes, indent=2, ensure_ascii=False))
         else:
@@ -145,6 +153,8 @@ def search_projects(search_value = None):
             ~participates_in {
                 uid
                 lamport_id
+                pubkey
+                content
             }
             user_count
             event_count
@@ -191,28 +201,24 @@ def search_projects(search_value = None):
                 records_count = node.get('records_count')
                 print(f"节点 UID: {uid}, 类型: {node_type}")
                 event =set()
-                project_detail = {'event_type':event_type,  'event_count':event_count, 'records_count':records_count}
-
                 for predicate, value in node.items():
                     if predicate in ['~participates_in']:
                         event.add(predicate)
-                        if predicate == '~participates_in':
-                            project_detail['members'] = node[predicate]
                         for one_value in value:
                             print(one_value)
                             print(f"边: {uid} -> {one_value['uid']}")
-                            one_edge = {"uid": f"{uid}_{one_value['uid']}", 'source':uid, 'target':one_value['uid'],'category':'members'}
+                            one_edge = {"id": f"{uid}_{one_value['uid']}", 'source':uid, 'target':one_value['uid'],'label':one_value['uid'], 'category':'member'}
                             edges.append(one_edge)
                             user_count += 1
                     elif predicate in ['created_by']:
                         print(value)
                         print(f"边: {uid} -> {value['uid']}")
-                        one_edge = {"uid": f"{uid}_{value['uid']}", 'source':uid, 'target':value['uid'], 'category':predicate}
+                        one_edge = {"id": f"{uid}_{value['uid']}", 'source':uid, 'target':value['uid'],'label':value['uid'], 'category':predicate}
                         edges.append(one_edge)
                         user_count += 1
                 
-                project_detail['user_count'] = user_count
-                one_project = {'uid':uid, 'category':node_type, 'label':project_name, 'created_at':created_at, 'content':content, 'detail':project_detail}
+                project_detail = {'user_count':user_count, 'event_type':event_type,  'event_count':event_count, 'records_count':records_count}
+                one_project = {'id':uid, 'category':node_type, 'label':project_name, 'created_at':created_at, 'content':content, 'detail':project_detail}
                 projects.append(one_project)
             print("查询成功，返回的帖子及其提到的用户数据:")
             print(edges)
@@ -365,76 +371,9 @@ def search_tags():
         print(f"查询失败: {e}")
 
 
-def search_votes(search_value = None):
-    query_template = """
-    {
-        vote(func: %s) {
-            uid
-            id
-            dgraph.type
-            vote_title
-            content
-            vote_options
-            created_at
-            ~create_votes{
-                uid
-                lamport_id
-            }
-        }
-    }
-    """
-    
-    if search_value:
-        func_condition = f'or(eq(vote_title, {search_value}), eq(twitter_id, {search_value}), eq(eth_address, {search_value}))'
-        func_condition = f'eq(vote_title, {search_value})'
-
-    else:
-        func_condition = 'type(Vote)'
-    
-    query = query_template % func_condition
-
-    print(query)
-    query = {"query": query}
-
-    url = "http://144.126.138.135:8080/query"
-    url = "http://212.56.40.235:8080/query"
-
-    headers = {"Content-Type": "application/json"}
-    print(query)
-    # try:
-    if True:
-        response = requests.post(url, headers=headers, data=json.dumps(query))
-        response.raise_for_status() 
-        result = response.json()
-        print(result)
-        edges = []
-        votes = []
-        nodes = result.get("data", {}).get("vote", [])
-        if nodes:
-            for node in nodes:
-                uid = node.get("uid")
-                node_type = node.get("dgraph.type")[0]
-                created_at = node.get('created_at')
-                content = node.get('content')
-                vote_title = node.get('vote_title')
-                vote_options = node.get('vote_options')
-                vote_detail = {'vote_title':vote_title, 'content':content, 'created_at':created_at, 'vote_options':vote_options, }
-                one_user = {'uid':uid, 'category':node_type, 'label':vote_title, 'detail':vote_detail}
-                votes.append(one_user)
-            # print("查询成功，返回的帖子及其提到的用户数据:")
-            # print(edges)
-            # print(users)
-            return votes, edges
-            # print(json.dumps(nodes, indent=2, ensure_ascii=False))
-        else:
-            print("查询成功，但未找到帖子数据。")
-    # except Exception as e:
-    #     print(f"查询失败: {e}")
-
-
 # 创建 Flask 应用并集成 GraphQL
 app = Flask(__name__)
-CORS(app)  # 允许特定来源
+
 
 
 # 路由：获取所有帖子
@@ -488,15 +427,6 @@ def all_tags():
     }
     return jsonify(response)  # 返回 JSON 响应
 
-# 路由：获取所有标签
-@app.route('/all_votes')
-def all_votes():
-    votes, edges = search_votes()
-    response = {
-        'nodes': votes,
-        'edges': edges
-    }
-    return jsonify(response)  # 返回 JSON 响应
 
 @app.route('/ttt')
 def ttt():
@@ -513,10 +443,6 @@ def all_data():
     # all_nodes.extend(posts)
     # all_edges.extend(edges)
 
-
-    votes, edges = search_votes()
-    all_nodes.extend(votes)
-    all_edges.extend(edges)
 
     projects, edges = search_projects()
     all_nodes.extend(projects)
@@ -588,7 +514,7 @@ def graphql_server():
         return jsonify(result), status_code
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5006, debug=True)
+    app.run(host='0.0.0.0', port=5005, debug=True)
 
 
 
