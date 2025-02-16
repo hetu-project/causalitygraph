@@ -1,41 +1,22 @@
 import requests
 
-"""
-必须在这定义【】
-posts: [uid] @reverse .
-定义post列表
-否则它根本不能正确同步posts列表
-
-"""
-
 
 def alter_schema(schema_definition):
-    """
-    修改 Dgraph 的 Schema。
-
-    :param schema_definition: Schema 定义（字符串形式）。
-    :return: 请求的响应结果。
-    """
-    # Dgraph 的 /alter 端点
     url = "http://localhost:8080/alter"
     url = "http://144.126.138.135:8080/alter"
 
     
-    # 请求头
     headers = {
         "Content-Type": "application/json"
     }
     print(url)
-    # 请求体
     payload = schema_definition
     
-    # 发送 POST 请求
     response = requests.post(url, headers=headers, data=payload)
     
-    # 返回响应结果
     return response.json()
 
-# 示例 Schema 定义
+
 schema_definition = '''
 id: string @index(hash) .
 content: string .
@@ -53,10 +34,10 @@ created_by: uid .
 author: uid @reverse .
 posts: [uid] @reverse .
 
-reply: uid .  # 单一关系，指向被提及的帖子
-replyed_by: [uid] @reverse .  # 列表关系，指向提及当前帖子的帖子
-root: uid .  # 单一关系，指向根帖子
-child: [uid] @reverse .  # 列表关系，指向当前帖子的子帖子
+reply: uid . 
+replyed_by: [uid] @reverse . 
+root: uid . 
+child: [uid] @reverse . 
 
 inviter: string .
 invitee: string .

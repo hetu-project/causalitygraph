@@ -4,7 +4,6 @@ import threading
 import websockets
 from websockets.server import serve
 
-# 测试事件数据
 test_events = [
 ['EVENT', 'd892cae1-ec57-4087-86b5-ea5e3937b25c', {'kind': 2410, 'id': 'de5d7b9f699096a320bf1351ae76d346e8caa9f4a212367bcdb6e02238c11b26', 'pubkey': '79dff8f82963424e0bb02708a22e44b4980893e3a4be0fa3cb60a43b946764e3', 'created_at': 1738277694, 'tags': [['LamportID', '1'], ['vote_id', 'a6d73ab3-ba70-4490-88d6-8c645a49fc19'], ['title', 'test3'], ['content', '6 vote for test3'], ['start_time', '2025-01-31 10:31:58.293877 +00:00'], ['end_time', '2025-02-03 08:00:00 +00:00'], ['options', 'For,Against,Abstain'], ['sig', '']], 'content': '6 Vote a6d73ab3-ba70-4490-88d6-8c645a49fc19, Title:test3', 'sig': '879eb383276313493f249a14c30c029a3fda84c8b29423a8ac6b06bd2fcc76505fa6b2781f23fdc56eac64c131f5053650f0469abd1b71ca0b8c56c8de9246c1', 'uday_nonce': 46306}],
 ['EVENT', 'd892cae1-ec57-4087-86b5-ea5e3937b25c', {'kind': 2411, 'id': '201779ecde72a46db6c38e8d8ec4f26812ec767a868e6904c158f23a6b6e1a93', 'pubkey': '79dff8f82963424e0bb02708a22e44b4980893e3a4be0fa3cb60a43b946764e3', 'created_at': 1738377691, 'tags': [['LamportID', '1'], ['vote_id', 'a6d73ab3-ba70-4490-88d6-8c645a49fc19'], ['title', 'test2'], ['content', '6 vote for test2'], ['start_time', '2025-01-31 13:24:05.128740 +00:00'], ['end_time', '2025-02-04 08:00:00 +00:00'], ['options', 'For,Against,Abstain'], ["selection", "For"], ['sig', '']], 'content': '6 Vote cb91a1a4-5624-408c-819f-f8597c0ebbf1, Title:test2', 'sig': 'c1330a82934cd082333554e60ead0798e42724aa77cc3af0cf2312a5761c258d161800bdafb67d6c8085b6acf78bbe7bc76552e934b9cf09152b103a07b13e42', 'uday_nonce': 46305}],
@@ -57,21 +56,19 @@ test_events = [
         }
     ]
 ]
-# WebSocket 服务逻辑
+
 async def nostr_relay(websocket):
     print("Client connected")
     for event in test_events:
         await websocket.send(json.dumps(event))
         print(f"Sent event: {event}")
-        time.sleep(2)  # 每隔 2 秒发送一个事件
+        time.sleep(2)
 
-# 启动 WebSocket 服务
 async def start_websocket_server():
     async with serve(nostr_relay, "localhost", 8765):
         print("WebSocket server started on ws://localhost:8765")
-        await asyncio.Future()  # 保持服务运行
+        await asyncio.Future() 
 
-# 运行 WebSocket 服务
 if __name__ == "__main__":
     import asyncio
     asyncio.run(start_websocket_server())

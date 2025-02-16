@@ -1,11 +1,10 @@
 import requests
 import json
 
-# 定义查询
 query = {
     "query": """
     {
-        User(func: uid(0x2891)) {  # 替换为实际的帖子 UID
+        User(func: uid(0x2891)) {
             uid
             dgraph.type
             id
@@ -154,7 +153,6 @@ query = {
 
 
 
-# 发送 HTTP 请求
 url = "http://144.126.138.135:8080/query"
 # url = "http://212.56.40.235:8080/query"
 
@@ -163,10 +161,9 @@ headers = {"Content-Type": "application/json"}
 print(query)
 try:
     response = requests.post(url, headers=headers, data=json.dumps(query))
-    response.raise_for_status()  # 检查请求是否成功
+    response.raise_for_status() 
     result = response.json()
     print(result)
-    # 解析查询结果
     event = result.get("data", {}).get("User", [])
     if event:
         
