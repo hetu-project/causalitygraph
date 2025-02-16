@@ -7,13 +7,12 @@ import websocket as websocket_client
 import requests
 import uuid
 from flask_cors import CORS
-# Dgraph 连接配置
-DGRAPH_URI = "144.126.138.135:9080"  # Dgraph Alpha 的 gRPC 
+DGRAPH_URI = "144.126.138.135:9080"
 
 
 mutation_url = "http://144.126.138.135:8080/mutate?commitNow=true"
 headers = {"Content-Type": "application/json"}
-query_url = "http://144.126.138.135:8080/query"  # Dgraph 地址
+query_url = "http://144.126.138.135:8080/query"
 
 def query_user(pubkey):
     query = {
@@ -36,15 +35,15 @@ def query_user(pubkey):
 
     try:
         response = requests.post(query_url, headers=headers, data=json.dumps(query))
-        response.raise_for_status()  # 检查请求是否成功
+        response.raise_for_status()
         result = response.json()
         user = result.get("data", {}).get("user", [])
         if user:
             return user[0] 
         else:
-            return None  # User 节点不存在
+            return None
     except Exception as e:
-        print(f"查询 User 节点失败: {e}")
+        print(f"find User error: {e}")
         return None
 
 def query_user_by_account(platform, account):
@@ -68,15 +67,15 @@ def query_user_by_account(platform, account):
 
     try:
         response = requests.post(query_url, headers=headers, data=json.dumps(query))
-        response.raise_for_status()  # 检查请求是否成功
+        response.raise_for_status()
         result = response.json()
         user = result.get("data", {}).get("user", [])
         if user:
             return user[0] 
         else:
-            return None  # User 节点不存在
+            return None 
     except Exception as e:
-        print(f"查询 User 节点失败: {e}")
+        print(f"get User error: {e}")
         return None
 
 def query_post_by_account(platform, post_id):
@@ -94,15 +93,15 @@ def query_post_by_account(platform, post_id):
 
     try:
         response = requests.post(query_url, headers=headers, data=json.dumps(query))
-        response.raise_for_status()  # 检查请求是否成功
+        response.raise_for_status()
         result = response.json()
         user = result.get("data", {}).get("post", [])
         if user:
             return user[0] 
         else:
-            return None  # User 节点不存在
+            return None 
     except Exception as e:
-        print(f"查询 User 节点失败: {e}")
+        print(f"get post error: {e}")
         return None
 
 
@@ -121,15 +120,15 @@ def query_project(project_name):
 
     try:
         response = requests.post(query_url, headers=headers, data=json.dumps(query))
-        response.raise_for_status()  # 检查请求是否成功
+        response.raise_for_status() 
         result = response.json()
         user = result.get("data", {}).get("project", [])
         if user:
             return user[0] 
         else:
-            return None  # User 节点不存在
+            return None
     except Exception as e:
-        print(f"查询 User 节点失败: {e}")
+        print(f"get project error: {e}")
         return None
 
 
@@ -148,15 +147,15 @@ def query_post(post_id):
 
     try:
         response = requests.post(query_url, headers=headers, data=json.dumps(query))
-        response.raise_for_status()  # 检查请求是否成功
+        response.raise_for_status()
         result = response.json()
         post = result.get("data", {}).get("post", [])
         if post:
             return post[0]
         else:
-            return None  # Post 节点不存在
+            return None 
     except Exception as e:
-        print(f"查询 Post 节点失败: {e}")
+        print(f"get post error: {e}")
         return None
 
 def query_lamport(lamport_id):
@@ -174,15 +173,15 @@ def query_lamport(lamport_id):
 
     try:
         response = requests.post(query_url, headers=headers, data=json.dumps(query))
-        response.raise_for_status()  # 检查请求是否成功
+        response.raise_for_status()
         result = response.json()
         user = result.get("data", {}).get("user", [])
         if user:
             return user[0]
         else:
-            return None  # Post 节点不存在
+            return None 
     except Exception as e:
-        print(f"查询 user 节点失败: {e}")
+        print(f"get user error: {e}")
         return None
 
 
@@ -203,7 +202,7 @@ def query_id(id):
 
     try:
         response = requests.post(query_url, headers=headers, data=json.dumps(query))
-        response.raise_for_status()  # 检查请求是否成功
+        response.raise_for_status() 
         result = response.json()
         event = result.get("data", {}).get("event", [])
         if event:
@@ -211,7 +210,7 @@ def query_id(id):
         else:
             return None 
     except Exception as e:
-        print(f"查询 节点失败: {e}")
+        print(f"get id: {e}")
         return None
 
 def query_tag(content):
@@ -232,7 +231,7 @@ def query_tag(content):
 
     try:
         response = requests.post(query_url, headers=headers, data=json.dumps(query))
-        response.raise_for_status()  # 检查请求是否成功
+        response.raise_for_status() 
         result = response.json()
 
         tag = result.get("data", {}).get("tag", [])
@@ -242,17 +241,16 @@ def query_tag(content):
         else:
             return None  
     except Exception as e:
-        print(f"查询 tag 节点失败: {e}")
+        print(f"query tag  error: {e}")
         return None
 
 def insert_dgraph(mutation, info=''):
-    # 将 mutation 转换为 JSON 格式
     mutation_json = json.dumps(mutation)
 
     # try:
     if True:
         response = requests.post(mutation_url, headers=headers, data=mutation_json)
-        response.raise_for_status()  # 检查请求是否成功
+        response.raise_for_status() 
         result = response.json()
         print(result)
         uids = result.get("data", {}).get("uids", {})
@@ -269,21 +267,21 @@ def insert_dgraph(mutation, info=''):
     #     print(f"insert {info} failed error: {e}")
 
 
-# 初始化 Dgraph 客户端
+
 client_stub = pydgraph.DgraphClientStub(DGRAPH_URI)
 client = pydgraph.DgraphClient(client_stub)
 
 
-# 创建可执行的 GraphQL Schema
+
 # schema = make_executable_schema(type_defs, query)
 
-# Nostr Relay 的 WebSocket 地址
+
 RELAY_URL = "ws://144.126.138.135:10547"
 RELAY_URL = "ws://localhost:8765"
 # RELAY_URL = "ws://144.126.138.135:10548"
 
 
-# WebSocket 事件处理
+
 def on_message(ws, message):
     # try:
     if True:
@@ -300,7 +298,7 @@ def on_message(ws, message):
     #     print("Error parsing message:", e)
 
 def save_event_to_dgraph(describe_id, event):
-    if event["kind"] == 0:  # 用户信息
+    if event["kind"] == 0: 
         mutation = {
             "set": [
                 {
@@ -317,7 +315,7 @@ def save_event_to_dgraph(describe_id, event):
             ]
         }
         insert_dgraph(mutation)
-    elif event["kind"] == 10:  # 发帖
+    elif event["kind"] == 10:
         print(event["id"])
         post_uid = query_post(event["id"])
         if post_uid:
@@ -325,10 +323,10 @@ def save_event_to_dgraph(describe_id, event):
             return  
         user_data = query_user(event["pubkey"])
         if user_data and "posts" in user_data:
-            if isinstance(user_data["posts"], dict):  # 如果 posts 是字典，转换为列表
+            if isinstance(user_data["posts"], dict):
                 user_data["posts"] = [user_data["posts"]]
         else:
-            user_data = None  # 如果 user_data 不存在，设为 None
+            user_data = None 
         print('user data:\n', user_data)
 
         post_data = {
@@ -352,14 +350,13 @@ def save_event_to_dgraph(describe_id, event):
 
         for tag in event.get("tags", []):
             if tag[0] == 'e':
-                post_id = tag[1]  # 被引用的事件 ID
-                marker = tag[3] if len(tag) > 3 else None  # 标记（reply 或 root）
-                # 查询被引用的事件是否存在
+                post_id = tag[1]
+                marker = tag[3] if len(tag) > 3 else None
                 referenced_post = query_post(post_id)
                 print(f'referenced_post\n {referenced_post}')
-                if referenced_post and "child" in referenced_post and isinstance(referenced_post["child"], dict):  # 如果 posts 是字典，转换为列表
+                if referenced_post and "child" in referenced_post and isinstance(referenced_post["child"], dict): 
                     referenced_post["child"] = [referenced_post["child"]]
-                if referenced_post and "replyed_by" in referenced_post and isinstance(referenced_post["replyed_by"], dict):  # 如果 posts 是字典，转换为列表
+                if referenced_post and "replyed_by" in referenced_post and isinstance(referenced_post["replyed_by"], dict): 
                     referenced_post["replyed_by"] = [referenced_post["replyed_by"]]
             
                 post_data[marker] = {
@@ -381,15 +378,15 @@ def save_event_to_dgraph(describe_id, event):
                             else []
                         ) 
                 
-            if tag[0] == "p":  # 提到其他用户
+            if tag[0] == "p":
                 mentioned_pubkey = tag[1]
                 print(f'mentioned_pubkey:\n{mentioned_pubkey}')
                 mentioned_user_data = query_user(mentioned_pubkey)
                 if mentioned_user_data and "mentioned_by" in mentioned_user_data:
-                    if isinstance(mentioned_user_data["mentioned_by"], dict):  # 如果 posts 是字典，转换为列表
+                    if isinstance(mentioned_user_data["mentioned_by"], dict): 
                         mentioned_user_data["mentioned_by"] = [user_data["mentioned_by"]]
                 else:
-                    mentioned_user_data = None  # 如果 user_data 不存在，设为 None
+                    mentioned_user_data = None
                 print(f'mentioned_user_data status :\n{mentioned_user_data}')
 
                 post_data['mention_p'] = {
@@ -403,16 +400,16 @@ def save_event_to_dgraph(describe_id, event):
                         ) 
                     }
 
-            elif tag[0] == "t":  # 标签
+            elif tag[0] == "t": 
                 tag_name = tag[1]
 
                 print(f'tag_name:\n{tag_name}')
                 tag_data = query_tag(tag_name)
                 if tag_data and "posts" in tag_data:
-                    if isinstance(tag_data["posts"], dict):  # 如果 posts 是字典，转换为列表
+                    if isinstance(tag_data["posts"], dict):
                         tag_data["posts"] = [tag_data["posts"]]
                 else:
-                    tag_data = None  # 如果 user_data 不存在，设为 None
+                    tag_data = None 
                 print(f'tag_name_data status :\n{tag_data}')
 
                 post_data['tags'] = {
@@ -432,7 +429,7 @@ def save_event_to_dgraph(describe_id, event):
             }
         print(post_data)
         insert_dgraph(mutation, info='post')
-    elif event["kind"] == 3:  # 关注列表
+    elif event["kind"] == 3: 
         mutation = {
             "set": [
                 {
@@ -791,7 +788,7 @@ def save_event_to_dgraph(describe_id, event):
             print(f"User with pubkey {event['pubkey']} not found. Please bind an account.")
             return
 
-        uid = user_data['uid']  # 获取用户的 UID
+        uid = user_data['uid']
         print(event)
         project_data = {
             "id": event["id"],
@@ -802,23 +799,22 @@ def save_event_to_dgraph(describe_id, event):
             "pubkey": event["pubkey"],
         }
         print('11111')
-        # 解析 tags
         for tag in event.get("tags", []):
             if tag[0] == "project_name":
                 project_data["project_name"] = tag[1]
             elif tag[0] == "user_count":
-                project_data["user_count"] = int(tag[1])  # 转换为整数
+                project_data["user_count"] = int(tag[1])
             elif tag[0] == "event_count":
-                project_data["records_count"] = int(tag[1])  # 转换为整数
+                project_data["records_count"] = int(tag[1]) 
             elif tag[0] == "records_count":
-                project_data["event_count"] = int(tag[1])  # 转换为整数
+                project_data["event_count"] = int(tag[1]) 
             elif tag[0] == "event_type":
                 if "event_type" not in project_data:
                     project_data["event_type"] = []
                 project_data["event_type"].append(tag[1])
         print('2222')
 
-        # 构建 Dgraph 的 mutation
+
         mutation = {
             "set": [
                 {
@@ -840,7 +836,6 @@ def save_event_to_dgraph(describe_id, event):
             ]
         }
         print(mutation)
-        # 插入数据到 Dgraph
         insert_dgraph(mutation)
         print("Project event stored successfully.")
 
@@ -852,14 +847,13 @@ def on_close(ws, close_status_code, close_msg):
 
 def on_open(ws):
     print("Connected to Nostr Relay")
-    # 发送 Nostr 协议的订阅请求
-    subscription_id = str(uuid.uuid4())  # 生成唯一的订阅 ID
-    filters = {"kinds": [1], "limit": 10}  # 订阅条件：kind=1 的事件，最多 10 条
-    filters = {"kinds": [2323],}  # 订阅条件：kind=1 的事件，最多 10 条
+    subscription_id = str(uuid.uuid4()) 
+    filters = {"kinds": [1], "limit": 10}   
+    filters = {"kinds": [2323],}   
 
-    # filters = {}  # 订阅条件：kind=1 的事件，最多 10 条
+    # filters = {}   
 
-    message = ["REQ", subscription_id, filters]  # Nostr 协议的 REQ 消息
+    message = ["REQ", subscription_id, filters]
     ws.send(json.dumps(message))
     print(f"Sent subscription request: {message}")
 
@@ -873,10 +867,8 @@ def start_websocket():
     ws.on_open = on_open
     ws.run_forever()
 
-# 启动 WebSocket 连接
 threading.Thread(target=start_websocket, daemon=True).start()
 
-# 创建 Flask 应用并集成 GraphQL
 app = Flask(__name__)
 CORS(app)
 

@@ -2,6 +2,11 @@ nohup.out
 app copy.py
 bpp copy.py
 wstest copy.py
-wstest copy2.py
+wstest copy 2.py
 q*
 getws.py
+duid.py
+addedge.py
+adduser.py
+ap.py
+test*

@@ -9,7 +9,7 @@ import requests
 from ariadne.wsgi import GraphQL
 from flask_cors import CORS
 
-DGRAPH_URI = "144.126.138.135:9080"  # Dgraph Alpha 的 gRPC 
+DGRAPH_URI = "144.126.138.135:9080" 
 
 
 headers = {"Content-Type": "application/json"}
@@ -114,15 +114,14 @@ def search_users(search_value = None):
                 user_detail['event_type'] =list(event)
                 one_user = {'uid':uid, 'category':node_type, 'label':lamport_id, 'detail':user_detail}
                 users.append(one_user)
-            # print("查询成功，返回的帖子及其提到的用户数据:")
             # print(edges)
             # print(users)
             return users, edges
             # print(json.dumps(nodes, indent=2, ensure_ascii=False))
         else:
-            print("查询成功，但未找到帖子数据。")
+            print("no user")
     # except Exception as e:
-    #     print(f"查询失败: {e}")
+    #     print(f"error: {e}")
 
 
 def search_projects(search_value = None):
@@ -189,7 +188,7 @@ def search_projects(search_value = None):
                 event_type = node.get('event_type')
                 event_count = node.get('event_count')
                 records_count = node.get('records_count')
-                print(f"节点 UID: {uid}, 类型: {node_type}")
+                print(f"pot  UID: {uid}, type: {node_type}")
                 event =set()
                 project_detail = {'event_type':event_type,  'event_count':event_count, 'records_count':records_count}
 
@@ -200,13 +199,13 @@ def search_projects(search_value = None):
                             project_detail['members'] = node[predicate]
                         for one_value in value:
                             print(one_value)
-                            print(f"边: {uid} -> {one_value['uid']}")
+                            print(f"edge: {uid} -> {one_value['uid']}")
                             one_edge = {"uid": f"{uid}_{one_value['uid']}", 'source':uid, 'target':one_value['uid'],'category':'members'}
                             edges.append(one_edge)
                             user_count += 1
                     elif predicate in ['created_by']:
                         print(value)
-                        print(f"边: {uid} -> {value['uid']}")
+                        print(f"edge: {uid} -> {value['uid']}")
                         one_edge = {"uid": f"{uid}_{value['uid']}", 'source':uid, 'target':value['uid'], 'category':predicate}
                         edges.append(one_edge)
                         user_count += 1
@@ -214,15 +213,15 @@ def search_projects(search_value = None):
                 project_detail['user_count'] = user_count
                 one_project = {'uid':uid, 'category':node_type, 'label':project_name, 'created_at':created_at, 'content':content, 'detail':project_detail}
                 projects.append(one_project)
-            print("查询成功，返回的帖子及其提到的用户数据:")
+
             print(edges)
             print(projects)
             return projects, edges
             # print(json.dumps(nodes, indent=2, ensure_ascii=False))
         else:
-            print("查询成功，但未找到帖子数据。")
+            print("no projects")
     # except Exception as e:
-    #     print(f"查询失败: {e}")
+    #     print(f"error: {e}")
 
 
 def search_posts():
@@ -230,7 +229,7 @@ def search_posts():
     query = {
         "query": """
         {
-            post(func: type(Post)) {  # 替换为实际的帖子 UID
+            post(func: type(Post)) {   
                 uid
                 dgraph.type
                 id
@@ -255,7 +254,6 @@ def search_posts():
         """
     }
 
-    # 发送 HTTP 请求
     url = "http://144.126.138.135:8080/query"
     url = "http://212.56.40.235:8080/query"
 
@@ -263,10 +261,10 @@ def search_posts():
 
     try:
         response = requests.post(url, headers=headers, data=json.dumps(query))
-        response.raise_for_status()  # 检查请求是否成功
+        response.raise_for_status()    
         result = response.json()
         print(result)
-        # 解析查询结果
+           
         edges = []
         posts = []
         nodes = result.get("data", {}).get("post", [])
@@ -280,28 +278,27 @@ def search_posts():
 
                 one_post = {'id':uid, 'label':uid, 'category':node_type, 'pubkey':pubkey, 'created_at':created_at, 'content':content }
                 posts.append(one_post)
-                print(f"节点 UID: {uid}, 类型: {node_type}")
+                print(f"port UID: {uid}, type: {node_type}")
                 for predicate, value in node.items():
                     if predicate in ['reply', 'root','tags','mention_p']:
                         if type(value) == list:
                             for one_value in value:
                                 print(one_value, value)
-                                print(f"边: {uid} -> {one_value['uid']}")
+                                print(f"edge: {uid} -> {one_value['uid']}")
                                 one_edge = {"id": f"{uid}_{one_value['uid']}", 'source':uid, 'target':one_value['uid'],'label':one_value['uid'], 'category':'post'}
                                 edges.append(one_edge)
                         else:
                             one_value = value
-                            print(f"边: {uid} -> {one_value['uid']}")
+                            print(f"edge: {uid} -> {one_value['uid']}")
                             one_edge = {"id": f"{uid}_{one_value['uid']}", 'source':uid, 'target':one_value['uid'],'label':one_value['uid'], 'category':'post'}
                             edges.append(one_edge)                            
-            print("查询成功，返回的帖子及其提到的用户数据:")
             print(posts)
             return posts, edges
             # print(json.dumps(nodes, indent=2, ensure_ascii=False))
         else:
-            print("查询成功，但未找到帖子数据。")
+            print("no posts")
     except Exception as e:
-        print(f"查询失败: {e}")
+        print(f"error: {e}")
 
 
 def search_tags():
@@ -309,7 +306,7 @@ def search_tags():
     query = {
         "query": """
         {
-            tag(func: type(Tag)) {  # 替换为实际的帖子 UID
+            tag(func: type(Tag)) {   
                 uid
                 dgraph.type
                 posts{
@@ -320,7 +317,7 @@ def search_tags():
         """
     }
 
-    # 发送 HTTP 请求
+        
     url = "http://144.126.138.135:8080/query"
     url = "http://212.56.40.235:8080/query"
 
@@ -328,10 +325,10 @@ def search_tags():
 
     try:
         response = requests.post(url, headers=headers, data=json.dumps(query))
-        response.raise_for_status()  # 检查请求是否成功
+        response.raise_for_status()    
         result = response.json()
         print(result)
-        # 解析查询结果
+           
         edges = []
         tags = []
         nodes = result.get("data", {}).get("tag", [])
@@ -345,24 +342,23 @@ def search_tags():
 
                 one_post = {'id':uid, 'category':node_type, 'label': uid, 'pubkey':pubkey, 'created_at':created_at, 'content':content }
                 tags.append(one_post)
-                print(f"节点 UID: {uid}, 类型: {node_type}")
+                print(f"port UID: {uid}, type: {node_type}")
                 for predicate, value in node.items():
                     if predicate == 'posts':
                         for one_value in value:
                             print(one_value, value)
-                            print(f"边: {uid} -> {one_value['uid']}")
+                            print(f"edge: {uid} -> {one_value['uid']}")
                             one_edge = {"id": f"{uid}_{one_value['uid']}", 'source':uid, 'target':one_value['uid'],'label':one_value['uid'], 'category':'post'}
                             edges.append(one_edge)
                       
-            print("查询成功，返回的帖子及其提到的用户数据:")
             print(edges)
             # print(tags)
             return tags, edges
             # print(json.dumps(nodes, indent=2, ensure_ascii=False))
         else:
-            print("查询成功，但未找到帖子数据。")
+            print("no tags")
     except Exception as e:
-        print(f"查询失败: {e}")
+        print(f"error: {e}")
 
 
 def search_votes(search_value = None):
@@ -421,23 +417,20 @@ def search_votes(search_value = None):
                 vote_detail = {'vote_title':vote_title, 'content':content, 'created_at':created_at, 'vote_options':vote_options, }
                 one_user = {'uid':uid, 'category':node_type, 'label':vote_title, 'detail':vote_detail}
                 votes.append(one_user)
-            # print("查询成功，返回的帖子及其提到的用户数据:")
             # print(edges)
             # print(users)
             return votes, edges
             # print(json.dumps(nodes, indent=2, ensure_ascii=False))
         else:
-            print("查询成功，但未找到帖子数据。")
+            print("no votes")
     # except Exception as e:
-    #     print(f"查询失败: {e}")
+    #     print(f"error: {e}")
 
 
-# 创建 Flask 应用并集成 GraphQL
 app = Flask(__name__)
-CORS(app)  # 允许特定来源
+CORS(app)
 
 
-# 路由：获取所有帖子
 @app.route('/all_posts')
 def all_posts():
     posts, edges = search_posts()
@@ -445,9 +438,8 @@ def all_posts():
         'nodes': posts,
         'edges': edges
     }
-    return jsonify(response)  # 返回 JSON 响应
+    return jsonify(response)       
 
-# 路由：获取所有用户
 @app.route('/all_users')
 def all_users():
     users, edges = search_users()
@@ -455,7 +447,7 @@ def all_users():
         'nodes': users,
         'edges': edges
     }
-    return jsonify(response)  # 返回 JSON 响应
+    return jsonify(response)       
 
 @app.route('/all_projects')
 def all_projects():
@@ -464,21 +456,20 @@ def all_projects():
         'nodes': projects,
         'edges': edges
     }
-    return jsonify(response)  # 返回 JSON 响应
+    return jsonify(response)       
 
 @app.route('/user/<search_value>')
 def get_user(search_value):
-    user, edges = search_users(search_value)  # 假设你有一个函数 search_user_by_id 来根据 user_id 查询用户
+    user, edges = search_users(search_value)
     if user:
         response = {
             'node': user,
             'edges': edges
         }
-        return jsonify(response)  # 返回 JSON 响应
+        return jsonify(response)       
     else:
-        return jsonify({'error': 'User not found'}), 404  # 如果用户不存在，返回 404 错误
+        return jsonify({'error': 'User not found'}), 404  
 
-# 路由：获取所有标签
 @app.route('/all_tags')
 def all_tags():
     tags, edges = search_tags()
@@ -486,9 +477,8 @@ def all_tags():
         'nodes': tags,
         'edges': edges
     }
-    return jsonify(response)  # 返回 JSON 响应
+    return jsonify(response)       
 
-# 路由：获取所有标签
 @app.route('/all_votes')
 def all_votes():
     votes, edges = search_votes()
@@ -496,19 +486,17 @@ def all_votes():
         'nodes': votes,
         'edges': edges
     }
-    return jsonify(response)  # 返回 JSON 响应
+    return jsonify(response)       
 
 @app.route('/ttt')
 def ttt():
     return f'sss'
 
-# 路由：获取所有数据
 @app.route('/all_data')
 def all_data():
     all_nodes = []
     all_edges = []
 
-    # 获取帖子数据
     # posts, edges = search_posts()
     # all_nodes.extend(posts)
     # all_edges.extend(edges)
@@ -522,12 +510,11 @@ def all_data():
     all_nodes.extend(projects)
     all_edges.extend(edges)
     
-    # 获取用户数据
+          
     users, edges = search_users()
     all_nodes.extend(users)
     all_edges.extend(edges)
 
-    # 获取标签数据
     # tags, edges = search_tags()
     # all_nodes.extend(tags)
     # all_edges.extend(edges)
@@ -536,9 +523,8 @@ def all_data():
         'nodes': all_nodes,
         'edges': all_edges
     }
-    return jsonify(response)  # 返回 JSON 响应
+    return jsonify(response)       
 
-# 定义 GraphQL schema
 type_defs = """
     type User {
         id: ID!
@@ -574,14 +560,12 @@ query = QueryType()
 schema = make_executable_schema(type_defs, query)
 graphql_app = GraphQL(schema, debug=True)
 
-# 添加 GraphQL 路由
+
 @app.route("/graphql", methods=["GET", "POST"])
 def graphql_server():
     if request.method == "GET":
-        # 返回 GraphQL Playground
         return graphql_app.handle_request(request.environ, request.start_response)
     else:
-        # 处理 GraphQL 查询
         data = request.get_json()
         success, result = graphql_app.execute_query(request.environ, data)
         status_code = 200 if success else 400
