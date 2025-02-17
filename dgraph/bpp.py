@@ -8,12 +8,7 @@ from ariadne import QueryType, make_executable_schema
 import requests
 from ariadne.wsgi import GraphQL
 from flask_cors import CORS
-
-DGRAPH_URI = "144.126.138.135:9080" 
-
-
-headers = {"Content-Type": "application/json"}
-
+from config import *
 
 def search_users(search_value = None):
     # exit()
@@ -75,14 +70,11 @@ def search_users(search_value = None):
     print(query)
     query = {"query": query}
 
-    url = "http://144.126.138.135:8080/query"
-    url = "http://212.56.40.235:8080/query"
-
     headers = {"Content-Type": "application/json"}
     print(query)
     # try:
     if True:
-        response = requests.post(url, headers=headers, data=json.dumps(query))
+        response = requests.post(query_url, headers=headers, data=json.dumps(query))
         response.raise_for_status() 
         result = response.json()
         # print(result)
@@ -163,14 +155,11 @@ def search_projects(search_value = None):
     print(query)
     query = {"query": query}
 
-    url = "http://144.126.138.135:8080/query"
-    url = "http://212.56.40.235:8080/query"
-
     headers = {"Content-Type": "application/json"}
     print(query)
     # try:
     if True:
-        response = requests.post(url, headers=headers, data=json.dumps(query))
+        response = requests.post(query_url, headers=headers, data=json.dumps(query))
         response.raise_for_status() 
         result = response.json()
         print(result)
@@ -254,13 +243,10 @@ def search_posts():
         """
     }
 
-    url = "http://144.126.138.135:8080/query"
-    url = "http://212.56.40.235:8080/query"
-
     headers = {"Content-Type": "application/json"}
 
     try:
-        response = requests.post(url, headers=headers, data=json.dumps(query))
+        response = requests.post(query_url, headers=headers, data=json.dumps(query))
         response.raise_for_status()    
         result = response.json()
         print(result)
@@ -317,14 +303,11 @@ def search_tags():
         """
     }
 
-        
-    url = "http://144.126.138.135:8080/query"
-    url = "http://212.56.40.235:8080/query"
 
     headers = {"Content-Type": "application/json"}
 
     try:
-        response = requests.post(url, headers=headers, data=json.dumps(query))
+        response = requests.post(query_url, headers=headers, data=json.dumps(query))
         response.raise_for_status()    
         result = response.json()
         print(result)
@@ -392,14 +375,11 @@ def search_votes(search_value = None):
     print(query)
     query = {"query": query}
 
-    url = "http://144.126.138.135:8080/query"
-    url = "http://212.56.40.235:8080/query"
-
     headers = {"Content-Type": "application/json"}
     print(query)
     # try:
     if True:
-        response = requests.post(url, headers=headers, data=json.dumps(query))
+        response = requests.post(query_url, headers=headers, data=json.dumps(query))
         response.raise_for_status() 
         result = response.json()
         print(result)

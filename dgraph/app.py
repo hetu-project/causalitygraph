@@ -7,12 +7,9 @@ import websocket as websocket_client
 import requests
 import uuid
 from flask_cors import CORS
-DGRAPH_URI = "144.126.138.135:9080"
+from config import *
 
 
-mutation_url = "http://144.126.138.135:8080/mutate?commitNow=true"
-headers = {"Content-Type": "application/json"}
-query_url = "http://144.126.138.135:8080/query"
 
 def query_user(pubkey):
     query = {
@@ -185,8 +182,6 @@ def query_lamport(lamport_id):
         return None
 
 
-
-
 def query_id(id):
     query = {
         "query": """
@@ -272,13 +267,7 @@ client_stub = pydgraph.DgraphClientStub(DGRAPH_URI)
 client = pydgraph.DgraphClient(client_stub)
 
 
-
 # schema = make_executable_schema(type_defs, query)
-
-
-RELAY_URL = "ws://144.126.138.135:10547"
-RELAY_URL = "ws://localhost:8765"
-# RELAY_URL = "ws://144.126.138.135:10548"
 
 
 
@@ -482,18 +471,15 @@ def save_event_to_dgraph(describe_id, event):
 
     elif event["kind"] == 2321:
         user_data = query_user(event["pubkey"])
-        print('111111')
         if user_data:
             print(f"user have been recorded, uid: {user_data}")
             return  
-        print('2222222')
     
         for tag in event.get("tags", []):
             if tag[0] == 'LamportId':
                 lamport_id = tag[1]
             if tag[0] == 'Twitter':
                 twitter_id = tag[1]
-        print('333333')
         
         print(f"lamport_id: {lamport_id}\n twitter_id:{twitter_id}")
         mutation = {
