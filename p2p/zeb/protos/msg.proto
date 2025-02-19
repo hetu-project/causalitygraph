@@ -1,0 +1,196 @@
+syntax = "proto3";
+option go_package = "./";
+
+package protos;
+
+message ZMessage {
+  bytes id = 1;
+  uint32 version = 2;
+  ZType type = 3;
+  bytes public_key = 4;
+  bytes data = 5;
+  bytes signature = 6;
+  bytes from = 7;
+  bytes to = 8;
+}
+
+enum ZType {
+  Z_TYPE_RNG = 0;
+  Z_TYPE_EVENT = 1;
+  Z_TYPE_CLOCK = 2;
+  Z_TYPE_GATEWAY = 3;
+  Z_TYPE_ZCHAT = 4;
+}
+
+message Clock {
+  map<string, uint64> values = 1;
+}
+
+message ClockInfo {
+  Clock clock = 1;
+  bytes node_id = 2;
+  bytes clock_hash = 3;
+  bytes message_id = 4;
+  uint64 count = 5;
+  uint64 create_at = 6;
+}
+
+message MergeLog {
+  bytes from_id = 1;
+  bytes to_id = 2;
+  uint64 start_count = 3;
+  uint64 end_count = 4;
+  Clock s_clock = 5;
+  Clock e_clock = 6;
+  uint64 merge_at = 7;
+}
+
+// zmessage type = Z_TYPE_CLOCK
+message ZClock {
+  ClockType type = 1;
+  bytes data = 2;
+}
+
+enum ClockType {
+  CLOCK_TYPE_EVENT_TRIGGER = 0;
+  CLOCK_TYPE_DIFF_REQ = 1;
+  CLOCK_TYPE_DIFF_RSP = 2;
+  CLOCK_TYPE_ACTIVE_SYNC = 3;
+}
+
+// Server Clock Message
+message EventTrigger {
+  ClockInfo clock_info = 1;
+  ZMessage message = 2;
+}
+
+message DiffReq {
+  bytes to = 1;
+  ClockInfo from_clock = 2;
+}
+
+message DiffResp {
+  bytes to = 1;
+  repeated string diffs = 2;
+  ClockInfo from = 3;
+}
+
+message ActiveSync {
+  bytes to = 1;
+  repeated string diffs = 2;
+  ClockInfo latest = 3;
+}
+
+message Innermsg {
+  Identity identity = 1;
+  Action action = 2;
+  PushType push_type = 3;        // for vlc
+  ZMessage message = 4;
+  repeated bytes public_keys = 5;
+  repeated bytes signatures = 6;  // for verifying or threshold signatures
+}
+
+enum Identity {
+  IDENTITY_CLIENT = 0;
+  IDENTITY_SERVER = 1;
+  IDENTITY_INIT = 2;
+}
+
+enum Action {
+  ACTION_READ = 0;
+  ACTION_WRITE = 1;
+  ACTION_READ_REPLY = 2;
+  ACTION_WRITE_REPLY = 3;
+}
+
+enum PushType {
+  PUSH_TYPE_DIRECT = 0;
+  PUSH_TYPE_BROADCAST = 1;
+}
+
+message ZChat {
+  bytes message_data = 1;
+  ClockInfo clock = 2;
+}
+
+// ZMessage.type = Z_TYPE_GATEWAY
+// Gateway just only needs read api
+message ZGateway {
+  string request_id = 1;
+  GatewayType type = 2;
+  QueryMethod method = 3;
+  bytes data = 4;
+}
+
+enum QueryMethod {
+  QUERY_BY_MSGID = 0;
+  QUERY_BY_TABLE_KEYID = 1;
+  QUERY_STATUS = 2;
+}
+
+
+enum GatewayType {
+  GATEWAY_TYPE_CLOCK_NODE = 0;
+  GATEWAY_TYPE_MERGE_LOG = 1;   // ref merge log
+  GATEWAY_TYPE_NODE_INFO = 2;  // heartbeat or node info
+}
+
+message QueryResponse {
+  string request_id = 1;
+  bool success = 2;
+  string reason = 3;
+  bytes data = 4;
+}
+
+message QueryStatus {
+  uint64 clock_total = 1;
+  uint64 mergelog_total = 2;
+  uint64 zmessage_total = 3;
+}
+
+// ZGateway.type = GATEWAY_TYPE_CLOCK_NODE
+message ClockNode {
+  Clock clock = 1;
+  bytes id = 2;
+  bytes message_id = 3;
+  uint64 count = 4;
+  uint64 create_at = 5;
+  bytes raw_message = 6;
+}
+
+// ZGateway.type = GATEWAY_TYPE_NODE_INFO
+message NodeInfo {
+  repeated string node_ids = 1;
+}
+
+message NodeData {
+  bytes public_key = 1;
+  uint32 websocket_port = 2;
+  uint32 json_rpc_port = 3;
+  string domain = 4;
+}
+
+// ZGateway.method = QUERY_BY_MSGID
+message QueryByMsgID {
+  string msg_id = 1;
+}
+
+// ZGateway.method = QUERY_BY_TABLE_KEYID
+message QueryByTableKeyID {
+  uint64 last_pos = 1;
+}
+
+message OutboundMsg {
+  bytes id = 1;
+  bytes from = 2;
+  bytes to = 3;
+  bytes data = 4;
+  ZType type = 5;
+}
+
+message InboundMsg {
+  bytes id = 1;
+  bytes from = 2;
+  bytes data = 3;
+  ZType type = 4;
+}
