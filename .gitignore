@@ -11,3 +11,5 @@ adduser.py
 ap.py
 test*
 config.py
+.DS_Store
+**/.DS_Store
