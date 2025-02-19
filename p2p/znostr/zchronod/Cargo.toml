@@ -1,0 +1,36 @@
+[package]
+name = "zchronod"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+zchronod-logger = { version = "0.1.0", path = "./logger" }
+process = {version = "0.1.0",path ="./process"}
+clap = "2.33.3"
+tokio = {  version = "1.35.1", features = ["full"] }
+matches = "0.1.10"
+api ={version ="0.1.0", path="./api"}
+proto ={version = "0.1.0",path = "./proto"}
+storage = {version = "0.1.0", path="./storage"}
+
+[workspace]
+members = ["proto"]
+
+[workspace.dependencies]
+env_logger = "0.9.3"
+lazy_static = "1.4.0"
+log = "0.4.20"
+log4rs = "1.0"
+
+[[bin]]
+path = "src/main.rs"
+name = "chrono"
+
+[workspace.package]
+edition = "2021"
+license = "MIT OR Apache-2.0"
+homepage = ""
+repository = ""
+authors = ["LingKang ShangGuan <sg.brave@gmail.com>"]

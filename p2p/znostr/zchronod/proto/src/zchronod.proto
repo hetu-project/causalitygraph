@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package zchronod;
+
+service zchronod {
+  rpc send(ZchronodRequest) returns (ZchronodResp) {}
+  rpc query_poll_list(Empty) returns (PollListResponse) {}
+  rpc query_poll_event_state(QueryPollEventRequest) returns(PollEventState) {}
+  rpc query_by_event_id(QueryEventRequest) returns(EventMeta) {}
+}
+
+message QueryEventRequest{
+  string eventid = 1;
+}
+
+message EventMeta{
+  Event event = 1;
+}
+
+message QueryPollEventRequest{
+  string eventid = 1;
+}
+
+message PollEventState{
+  repeated string state = 1;  // option - string - option - string
+}
+
+message Empty {}
+
+message PollListResponse {
+  repeated poll_item item = 1;
+}
+
+message poll_item {
+  repeated string poll_item = 1;
+}
+message ZchronodRequest {
+  Event msg = 1;
+}
+
+message ZchronodResp {
+  Event resp = 1;
+}
+
+message Event {
+  bytes id = 1;
+  bytes pubkey = 2;
+  int64 created_at = 3;
+  uint32 kind = 4;
+  repeated TagArray tags = 5;
+  string content = 6;
+  bytes sig = 7;
+}
+
+message TagArray {
+  repeated string values = 1;
+}
+
+message VlcMsg {// type = request, meta is event byt, type = sync , type = terminate
+  string type = 1;
+  bytes  meta = 2;
+}
+
+message ZMessage {// type = vlc
+  string type = 1;
+  bytes meta = 2;
+}
+
+/*
+{
+"id": <32-bytes lowercase hex-encoded sha256 of the serialized event data>,
+    "pubkey": <32-bytes lowercase hex-encoded public key of the event creator>,
+    "created_at": <unix timestamp in seconds>,
+    "kind": <integer between 0 and 65535>,
+    "tags": [
+    [<arbitrary string>...],
+// ...
+    ],
+"content": <arbitrary string>,
+    "sig": <64-bytes lowercase hex of the signature of the sha256 hash of the serialized event data, which is the same as the "id" field>
+    }
+
+ */

@@ -1,0 +1,26 @@
+[package]
+name = "process"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+authors.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+network = { version = "0.1.0", path = "../network" }
+log = "0.4.20"
+chronod = { version = "0.1.0", path = "../chronod" }
+api = { version = "0.1.0", path = "../api" }
+proto = { version = "0.1.0", path = "../proto" }
+serde = { version = "1.0.195", features = ["derive"] }
+serde_yaml = { version = "0.9.30", features = [] }
+tokio = { version = "1.35.1", features = [] }
+libp2p = { version = "0.52.4", features = [] }
+async-std = { version = "1.12.0", features = [] }
+bytes = "1.5.0"
+prost = { version = "0.12.3", features = [] }
+storage = { version = "0.1.0", path = "../storage" }
+hex = "0.4.3"
