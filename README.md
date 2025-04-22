@@ -1,66 +1,29 @@
 # Hetu Causality Graph
 
-A decentralized causality graph system that provides distributed digital knowledge graph capabilities.
+A decentralized data collaboration network that achieves fast, verifiable causality and data consistency on-chain through verifiable logical clocks and a POCW consensus protocol.
 
-## Core Features
+## Stack
 
-### 1. DGraph (Decentralized Digital Graph)
-- Decentralized knowledge graph system
-- Enables distributed storage and management of graph data
-- Automatic data backup and synchronization
-- Built on Dgraph for distributed database capabilities
+Causality Graph is built on a robust architecture integrating several key components: SDK, TEE relays, composite database and graph dashboard. Each component plays a crucial role in maintaining causal consistency of the decentralized data collaboration.
 
-### 2. P2P Network
-- Distributed peer-to-peer network communication
-- Ensures reliable and efficient data transmission between nodes
-- Relay node architecture with master-slave replication
-- Secure data transmission with TEE (Trusted Execution Environment)
+### SDK ###
 
-### 3. POCW (Proof of Causality Work)
-- Novel consensus mechanism for causality verification
-- Maintains data integrity and trust in the network
-- Lamport ID-based identity system
-- Causal consistency enforcement
+* Serves as the dApp interface for all interactions.
+* EVM and Nostr compatible.
 
-### 4. Causality Dashboard
-- Web-based visualization interface
-- Browse and interact with the causality graph
-- Monitor network status and analytics
-- User identity management and verification
+### TEE Relay ###
+* Ensures secure and efficient data transmission
+* Employ POCW for data consistency and reliability.
+* Each relay node is responsible for propagating data changes across the network while maintaining causal order.
 
-## System Architecture
+### Composite Database ###
 
-### Components
-1. **Frontend Interface**
-   - User interaction portal
-   - Data visualization
-   - Identity management
+* The database form a distributed graph-relation.
+* They synchronize data from Nostr relays, ensuring data consistency and integrity.
 
-2. **Backend TEE Gateway**
-   - Secure data processing
-   - Transaction validation
-   - Identity verification
+### Graph dashboard ###
 
-3. **Relay Nodes**
-   - Master-slave replication
-   - Data propagation
-   - Causal order maintenance
+* Provides a visual interface for users to interact with the graph database.
+* Allows exploration and manipulation of distributed documents.
 
-4. **Composite Database Nodes**
-   - Dgraph-based distributed storage
-   - Data synchronization
-   - Graph data management
-
-### Identity System
-- **Lamport ID**: Unique digital identity for users
-- **Social Binding**: Twitter account linkage
-- **Public Key Integration**: Nostr protocol compatibility
-- **Invitation System**: Community growth mechanism
-
-### Data Flow
-1. User interaction through frontend
-2. TEE gateway processing
-3. Relay node propagation
-4. Database synchronization
-5. Graph visualization update
 
