@@ -1,70 +1,82 @@
-<h1 align="center">
-  <br>
-  go-orbit-db
-  <br>
-</h1>
+# OrbitDB Go Example
 
-<h3 align="center">🤝 Go version of orbit-db.</h3>
+This is a Go implementation of the OrbitDB example that mimics the functionality of the [JS version](https://github.com/alexeyvolkoff/orbitdb-example).
 
-<p align="center">
-  <a href="https://github.com/berty/go-orbit-db/actions?query=workflow%3AGo"><img src="https://github.com/berty/go-orbit-db/workflows/Go/badge.svg" /></a>
-  <a href="https://github.com/berty/go-orbit-db/actions?query=workflow%3ARelease"><img src="https://github.com/berty/go-orbit-db/workflows/Release/badge.svg" /></a>
-  <a href="https://www.codefactor.io/repository/github/berty/go-orbit-db">
-    <img src="https://www.codefactor.io/repository/github/berty/go-orbit-db/badge"
-         alt="Code Factor">
-  </a>
-  <a href="https://goreportcard.com/report/berty.tech/go-orbit-db">
-    <img src="https://goreportcard.com/badge/berty.tech/go-orbit-db"
-         alt="Go Report Card">
-  </a>
-  <a href="https://github.com/berty/go-orbit-db/releases">
-    <img src="https://badge.fury.io/gh/berty%2Fgo-orbit-db.svg"
-         alt="GitHub version">
-  </a>
-  <a href="https://codecov.io/gh/berty/go-orbit-db">
-    <img src="https://codecov.io/gh/berty/go-orbit-db/branch/master/graph/badge.svg"
-         alt="Coverage" />
-  </a>
-  <a href="https://godoc.org/berty.tech/go-orbit-db">
-    <img src="https://godoc.org/berty.tech/go-orbit-db?status.svg"
-         alt="GoDoc">
-  </a>
-</p>
+## Prerequisites
 
-<p align="center"><b>
-    <a href="https://berty.tech">berty.tech</a> •
-    <a href="https://github.com/berty">GitHub</a>
-</b></p>
+- Go 1.16 or higher
+- A running IPFS daemon
 
-> A P2P Database on IPFS.
+## Setup
 
-[orbit-db](https://github.com/orbitdb/orbit-db/) is a distributed peer-to-peer database on [IPFS](https://github.com/ipfs/ipfs). This project intends to provide a fully compatible port of the JavaScript version in Go.
+1. Start an IPFS daemon:
 
-The majority of this code was vastly derived from the JavaScript's [orbit-db](https://github.com/orbitdb/orbit-db) project.
+```bash
+ipfs daemon
+```
+
+2. Build the example:
+
+```bash
+go build -o orbitdb-example ./cmd/orbitdb-example
+```
 
 ## Usage
 
-See [GoDoc](https://godoc.org/github.com/berty/go-orbit-db).
+### Running a single node
 
-## Install
-
-Constraints:
-
-* `go-orbit-db` currently only works with **go1.16** and later
-* You need to use the canonical import: `berty.tech/go-orbit-db` instead of `github.com/berty/go-orbit-db`
-* If you have `410 gone` errors, make sure that you use a reliable `$GOPROXY` or disable it completely
-
-Example:
-
-```console
-$ go version
-go version go1.17.3 darwin/amd64
-$ go get berty.tech/go-orbit-db
-[...]
-$
+```bash
+./orbitdb-example -data ./data/mynode
 ```
 
-## Licensing
+### Command line options
 
-*go-orbit-db* is licensed under the Apache License, Version 2.0.
-See [LICENSE](LICENSE) for the full license text.
+- `-data`: Data directory path (default: "./data")
+- `-db`: OrbitDB address to connect to (if connecting to an existing database)
+- `-listen`: Libp2p listen address (default: "/ip4/0.0.0.0/tcp/4001")
+- `-ipfs`: IPFS API endpoint (default: "localhost:5001")
+
+### Running multiple nodes
+
+Use the provided script to run three nodes that will automatically connect:
+
+```bash
+chmod +x scripts/run_nodes.sh
+./scripts/run_nodes.sh
+```
+
+This will:
+1. Start the first node that creates a new database
+2. Extract the database address from the logs
+3. Start two more nodes that connect to the same database
+4. Output logs to node1.log, node2.log, and node3.log
+
+### Manual multi-node setup
+
+1. Start the first node to create a new database:
+
+```bash
+./orbitdb-example -data ./data/node1 -listen "/ip4/0.0.0.0/tcp/4001"
+```
+
+2. Note the database address from the logs (e.g., `/orbitdb/QmYourCID/onmydisk`)
+
+3. Start additional nodes connecting to the same database:
+
+```bash
+./orbitdb-example -data ./data/node2 -listen "/ip4/0.0.0.0/tcp/4002" -db "/orbitdb/QmYourCID/onmydisk"
+```
+
+## How it works
+
+1. The application creates or loads a peer identity
+2. It connects to a local IPFS node
+3. It sets up a libp2p host
+4. It creates or connects to an OrbitDB database
+5. When connected, it adds a random text to IPFS and stores the CID in OrbitDB
+6. It listens for updates to the database and fetches files from IPFS when new entries are added
+7. On shutdown, it prints the final state of the database
+
+## License
+
+MIT
