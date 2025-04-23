@@ -28,3 +28,8 @@ package-lock.json
 lib
 test.html
 bench.js
+
+# golang
+nak
+mnt
+nak.exe
