@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "target": "esnext",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "declaration": true,
+    "strict": true,
+    "moduleResolution": "NodeNext",
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "emitDeclarationOnly": true,
+    "allowImportingTsExtensions": true,
+    "outDir": "lib/types",
+    "resolveJsonModule": true,
+    "rootDir": ".",
+    "types": ["bun-types"]
+  }
+}
