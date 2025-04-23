@@ -1,3 +1,4 @@
+# python
 nohup.out
 app copy.py
 bpp copy.py
@@ -17,3 +18,18 @@ config.py
 **/.DS_Store
 .DS_Store
 **/.DS_Store
+
+# javascript
+node_modules
+dist
+yarn.lock
+package-lock.json
+.envrc
+lib
+test.html
+bench.js
+
+# golang
+nak
+mnt
+nak.exe

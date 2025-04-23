@@ -3,13 +3,13 @@ module github.com/nbd-wtf/go-nostr
 go 1.24.1
 
 require (
+	github.com/FastFilter/xorfilter v0.2.1
 	github.com/ImVexed/fasturl v0.0.0-20230304231329-4e41488060f3
 	github.com/PowerDNS/lmdb-go v1.9.3
 	github.com/bluekeyes/go-gitdiff v0.7.1
 	github.com/btcsuite/btcd/btcec/v2 v2.3.4
 	github.com/btcsuite/btcd/btcutil v1.1.5
 	github.com/bytedance/sonic v1.13.1
-	github.com/cloudwego/base64x v0.1.5
 	github.com/coder/websocket v1.8.12
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.4.0
 	github.com/dgraph-io/badger/v4 v4.5.0
@@ -17,9 +17,8 @@ require (
 	github.com/elnosh/gonuts v0.3.1-0.20250123162555-7c0381a585e3
 	github.com/ethereum/go-ethereum v1.15.5
 	github.com/fiatjaf/eventstore v0.16.2
-	github.com/fiatjaf/khatru v0.17.3-0.20250312035319-596bca93c3ff
+	github.com/fiatjaf/khatru v0.17.4
 	github.com/gomarkdown/markdown v0.0.0-20241205020045-f7e15b2f3e62
-	github.com/graph-gophers/dataloader/v7 v7.1.0
 	github.com/jmoiron/sqlx v1.4.0
 	github.com/json-iterator/go v1.1.12
 	github.com/mailru/easyjson v0.9.0
@@ -36,6 +35,7 @@ require (
 	golang.org/x/crypto v0.36.0
 	golang.org/x/exp v0.0.0-20250305212735-054e65f0b394
 	golang.org/x/net v0.37.0
+	golang.org/x/sync v0.12.0
 	golang.org/x/text v0.23.0
 	modernc.org/sqlite v1.33.1
 )
@@ -52,6 +52,7 @@ require (
 	github.com/btcsuite/btcd/chaincfg/chainhash v1.1.0 // indirect
 	github.com/bytedance/sonic/loader v0.2.4 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+	github.com/cloudwego/base64x v0.1.5 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/decred/dcrd/crypto/blake256 v1.1.0 // indirect
 	github.com/dgraph-io/ristretto/v2 v2.1.0 // indirect

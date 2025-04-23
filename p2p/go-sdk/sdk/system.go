@@ -6,10 +6,10 @@ import (
 
 	"github.com/fiatjaf/eventstore"
 	"github.com/fiatjaf/eventstore/nullstore"
-	"github.com/graph-gophers/dataloader/v7"
 	"github.com/nbd-wtf/go-nostr"
 	"github.com/nbd-wtf/go-nostr/sdk/cache"
 	cache_memory "github.com/nbd-wtf/go-nostr/sdk/cache/memory"
+	"github.com/nbd-wtf/go-nostr/sdk/dataloader"
 	"github.com/nbd-wtf/go-nostr/sdk/hints"
 	"github.com/nbd-wtf/go-nostr/sdk/hints/memoryh"
 	"github.com/nbd-wtf/go-nostr/sdk/kvstore"
@@ -93,11 +93,13 @@ func NewSystem(mods ...SystemModifier) *System {
 		FollowListRelays: NewRelayStream("wss://purplepag.es", "wss://user.kindpag.es", "wss://relay.nos.social"),
 		MetadataRelays:   NewRelayStream("wss://purplepag.es", "wss://user.kindpag.es", "wss://relay.nos.social"),
 		FallbackRelays: NewRelayStream(
+			"wss://offchain.pub",
+			"wss://no.str.cr",
 			"wss://relay.damus.io",
 			"wss://nostr.mom",
 			"wss://nos.lol",
-			"wss://mostr.pub",
-			"wss://relay.nostr.band",
+			"wss://relay.mostr.pub",
+			"wss://nostr.land",
 		),
 		JustIDRelays: NewRelayStream(
 			"wss://cache2.primal.net/v1",

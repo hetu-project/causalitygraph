@@ -25,7 +25,7 @@ func (evt Event) String() string {
 	return string(j)
 }
 
-// GetID computes the event ID abd returns it as a hex string.
+// GetID computes the event ID and returns it as a hex string.
 func (evt *Event) GetID() string {
     message := evt.Serialize()
 	prefixedMessage := fmt.Sprintf("\x19Ethereum Signed Message:\n%d%s", len(message), message)
@@ -61,7 +61,10 @@ func (evt *Event) Serialize() []byte {
 	// the serialization process is just putting everything into a JSON array
 	// so the order is kept. See NIP-01
 	dst := make([]byte, 0, 100+len(evt.Content)+len(evt.Tags)*80)
+	return serializeEventInto(evt, dst)
+}
 
+func serializeEventInto(evt *Event, dst []byte) []byte {
 	// the header portion is easy to serialize
 	// [0,"pubkey",created_at,kind,[
 	dst = append(dst, "[0,\""...)
