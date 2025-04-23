@@ -2,33 +2,43 @@ package main
 
 import (
 	"context"
+	// "encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
-	"os/signal"
 	"path/filepath"
 	"strings"
-	"syscall"
-	"time"
 
 	orbitdb "berty.tech/go-orbit-db"
 	"berty.tech/go-orbit-db/accesscontroller"
 	"berty.tech/go-orbit-db/iface"
-	"berty.tech/go-orbit-db/stores/kvstore"
 	shell "github.com/ipfs/go-ipfs-api"
+	core "github.com/ipfs/kubo/core"
+	"github.com/ipfs/kubo/core/coreapi"
+
+	// coreapi "github.com/ipfs/kubo/client/rpc"
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p/core/crypto"
+	"github.com/libp2p/go-libp2p/core/host"
 	"github.com/libp2p/go-libp2p/core/peer"
 	ma "github.com/multiformats/go-multiaddr"
+
+	// Import IPFS data storage drivers
+	_ "github.com/ipfs/go-ds-badger"
+	_ "github.com/ipfs/go-ds-flatfs"
+	_ "github.com/ipfs/go-ds-leveldb"
+	_ "github.com/ipfs/go-ds-measure"
+	// "github.com/ipfs/kubo/core/node/libp2p"
 )
 
 var (
 	dbAddress  = flag.String("db", "", "OrbitDB address to connect to")
-	dataDir    = flag.String("data", "./data", "Data directory path")
+	dataDir    = flag.String("data", "~/data", "Data directory path")
 	listenAddr = flag.String("listen", "/ip4/0.0.0.0/tcp/4001", "Libp2p listen address")
-	ipfsAPI    = flag.String("ipfs", "localhost:5001", "IPFS API endpoint")
+	ipfssAPI   = flag.String("ipfs", "localhost:5001", "IPFS API endpoint")
+	Create     = true
 )
 
 func main() {
@@ -57,11 +67,30 @@ func main() {
 	log.Printf("Using Peer ID: %s", peerID.String())
 
 	// Connect to local IPFS node
-	sh := shell.NewShell(*ipfsAPI)
-	if _, err := sh.ID(); err != nil {
-		log.Fatalf("Failed to connect to IPFS: %v", err)
+	// ipfsAPI, ipfsNode, err := InitIPFS(ipfsDir)
+	// if err != nil {
+	// 	log.Fatalf("Failed to initialize IPFS: %v", err)
+	// }
+	// defer ipfsNode.Close()
+	node, _ := core.NewNode(ctx, &core.BuildCfg{
+		Online:  true,  // 必须为 true，OrbitDB 需要网络功能
+		NilRepo: false, // 需要持久化存储
+		ExtraOpts: map[string]bool{
+			"pubsub": true, // OrbitDB 依赖 PubSub
+			"mplex":  true, // 多路复用支持
+		},
+	})
+	api, _ := coreapi.NewCoreAPI(node)
+	// Initialize IPFS HTTP client
+	sh := shell.NewShell(*ipfssAPI)
+	if sh == nil {
+		log.Fatalf("Failed to initialize IPFS HTTP client")
 	}
-
+	// 2. 转换为 coreapi 接口
+	// api, err := coreapi.NewClient(sh)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
 	// Setup libp2p host
 	host, err := setupLibp2p(ctx, privKey, *listenAddr)
 	if err != nil {
@@ -77,41 +106,54 @@ func main() {
 	log.Printf("Peer addresses: %s", strings.Join(addrStrings, ", "))
 
 	// Create OrbitDB instance
-	orbit, err := orbitdb.NewOrbitDB(ctx, sh, &orbitdb.NewOrbitDBOptions{
-		Directory: orbitDBDir,
+	// orbit, err := orbitdb.NewOrbitDB(ctx, ipfsAPI, &orbitdb.NewOrbitDBOptions{
+	// 	Directory: &orbitDBDir,
+	// })
+	// Explicitly try to enable pubsub
+	// Create OrbitDB instance with explicit pubsub options
+	orbit, err := orbitdb.NewOrbitDB(ctx, api, &orbitdb.NewOrbitDBOptions{
+		Directory: &orbitDBDir,
 	})
 	if err != nil {
 		log.Fatalf("Failed to create OrbitDB instance: %v", err)
 	}
-	defer orbit.Close()
-
 	// Open or create database
-	var db iface.KeyValueStore
+	var db iface.DocumentStore
 	if *dbAddress != "" {
 		// Connect to existing database
 		log.Printf("Connecting to database: %s", *dbAddress)
 		dbInstance, err := orbit.Open(ctx, *dbAddress, &orbitdb.CreateDBOptions{
-			Directory: orbitDBDir,
-			Create:    true,
+			Directory: &orbitDBDir,
+			Create:    &Create,
 		})
 		if err != nil {
 			log.Fatalf("Failed to open database: %v", err)
 		}
-		db = dbInstance.(iface.KeyValueStore)
+		db = dbInstance.(iface.DocumentStore)
 	} else {
 		// Create new database with open write access
 		log.Printf("Creating new database")
-		acOptions := &accesscontroller.CreateAccessControllerOptions{
-			Access: map[string][]string{
-				"write": {"*"}, // Allow anyone to write
+		dbName := "nostr-events"
+
+		// Create database options, including index settings
+		// storeOptions := map[string]interface{}{
+		// 	"indexBy": "_id", // Use _id as the primary index
+		// }
+
+		// indexBy := "_id"
+		dbOptions := &orbitdb.CreateDBOptions{
+			AccessController: &accesscontroller.CreateAccessControllerOptions{
+				Type: "ipfs",
+				Access: map[string][]string{
+					"write": {"*"}, // Allow anyone to write
+				},
 			},
+			Directory: &orbitDBDir,
+			Create:    &Create,
+			// StoreSpecificOpts: storeOptions,
 		}
 
-		dbInstance, err := orbit.KeyValue(ctx, "onmydisk", &orbitdb.CreateDBOptions{
-			AccessController: accesscontroller.NewIPFSAccessController(ctx, acOptions),
-			Directory:        orbitDBDir,
-			Create:           true,
-		})
+		dbInstance, err := orbit.Docs(ctx, dbName, dbOptions)
 		if err != nil {
 			log.Fatalf("Failed to create database: %v", err)
 		}
@@ -119,92 +161,6 @@ func main() {
 		log.Printf("Database created with address: %s", db.Address().String())
 	}
 	defer db.Close()
-
-	// Setup DB event listener
-	go func() {
-		events := db.EventBus().Subscribe(new(kvstore.EventWrite))
-		defer db.EventBus().Unsubscribe(events)
-
-		for evt := range events {
-			event, ok := evt.(*kvstore.EventWrite)
-			if !ok {
-				continue
-			}
-			log.Printf("DB updated: Key=%s", event.Key)
-
-			// Get the value
-			val, err := db.Get(ctx, event.Key)
-			if err != nil {
-				log.Printf("Error getting value: %v", err)
-				continue
-			}
-
-			// Parse the value to extract CID
-			valueMap, ok := val.(map[string]interface{})
-			if !ok {
-				log.Printf("Invalid value format: %v", val)
-				continue
-			}
-
-			cid, ok := valueMap["cid"].(string)
-			if !ok {
-				log.Printf("No CID in value: %v", valueMap)
-				continue
-			}
-
-			// Fetch file from IPFS
-			log.Printf("Fetching file with CID: %s", cid)
-			reader, err := sh.Cat(cid)
-			if err != nil {
-				log.Printf("Failed to fetch file: %v", err)
-				continue
-			}
-
-			content, err := ioutil.ReadAll(reader)
-			if err != nil {
-				log.Printf("Failed to read file: %v", err)
-				continue
-			}
-
-			log.Printf("Fetched file contents: %s", string(content))
-		}
-	}()
-
-	// Add a random text file to IPFS
-	randomText := fmt.Sprintf("Text Message: %d", time.Now().UnixNano())
-	log.Printf("Creating random text: %s", randomText)
-
-	cid, err := sh.Add(strings.NewReader(randomText))
-	if err != nil {
-		log.Fatalf("Failed to add text to IPFS: %v", err)
-	}
-	log.Printf("Added file to IPFS: %s", cid)
-
-	// Store in OrbitDB
-	value := map[string]interface{}{
-		"peer": host.ID().String(),
-		"text": randomText,
-		"cid":  cid,
-	}
-
-	if err := db.Put(ctx, host.ID().String(), value); err != nil {
-		log.Fatalf("Failed to put value in OrbitDB: %v", err)
-	}
-	log.Printf("Added entry to OrbitDB with key: %s", host.ID().String())
-
-	// Keep running until interrupted
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, syscall.SIGINT, syscall.SIGTERM)
-	<-sigChan
-
-	log.Println("Shutting down...")
-	// Print final state of DB
-	allEntries, err := db.All(ctx)
-	if err != nil {
-		log.Printf("Failed to get all entries: %v", err)
-	} else {
-		log.Printf("Final DB state: %+v", allEntries)
-	}
 }
 
 // getOrCreatePeerID loads or creates a peer ID
@@ -264,19 +220,17 @@ func getOrCreatePeerID(settingsDir string) (crypto.PrivKey, peer.ID, error) {
 }
 
 // setupLibp2p creates a libp2p host
-func setupLibp2p(ctx context.Context, privKey crypto.PrivKey, listenAddr string) (peer.PeerHost, error) {
+func setupLibp2p(ctx context.Context, privKey crypto.PrivKey, listenAddr string) (host.Host, error) {
 	addr, err := ma.NewMultiaddr(listenAddr)
 	if err != nil {
 		return nil, fmt.Errorf("invalid listen address: %w", err)
 	}
 
-	// Create libp2p host
+	// Create libp2p host with only necessary options
 	host, err := libp2p.New(
 		libp2p.ListenAddrs(addr),
 		libp2p.Identity(privKey),
 		libp2p.EnableRelay(),
-		libp2p.EnableAutoRelay(),
-		libp2p.EnableNATService(),
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create libp2p host: %w", err)
