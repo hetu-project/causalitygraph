@@ -1,0 +1,107 @@
+// 变量
+@card-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+@card-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+@card-border-radius: 8px;
+@card-padding: 16px;
+@card-image-size: 128px;
+
+// 页面样式
+.vote-page {
+  padding: 24px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.create-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+// 网格布局
+.subspace-grid {
+  display: grid;
+  gap: 24px;
+  grid-template-columns: 1fr;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+// 卡片样式
+.subspace-card {
+  width: 100%;
+  transition: box-shadow 0.3s;
+
+  &:hover {
+    box-shadow: @card-shadow-hover;
+  }
+}
+
+.card-content {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.card-image {
+  width: @card-image-size;
+  height: @card-image-size;
+  flex-shrink: 0;
+
+  .image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: @card-border-radius;
+  }
+}
+
+.card-info {
+  flex: 1;
+  margin: 0 16px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.card-description {
+  color: #666;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.card-footer {
+  display: flex;
+  justify-content: center;
+}
+
+.enter-button {
+  width: 100%;
+} 

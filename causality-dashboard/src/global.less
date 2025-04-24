@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// 变量
+@primary-color: #1890ff;
+@text-color: #333;
+@background-color: #f0f2f5;
+
+// 混合
+.flex-center() {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-between() {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+// 全局样式
+body {
+  background-color: @background-color;
+  color: @text-color;
+}
+
+// 布局相关
+.layout-container {
+  min-height: 100vh;
+  background: @background-color;
+}
+
+// 卡片样式
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .card-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+
+  .card-content {
+    color: @text-color;
+  }
+}
+
+// 按钮样式
+.button {
+  &-primary {
+    background: @primary-color;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+// 响应式布局
+.responsive-grid {
+  display: grid;
+  gap: 24px;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+} 
