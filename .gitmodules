@@ -4,3 +4,9 @@
 [submodule "causality-dash"]
 	path = causality-dash
 	url = git@github.com:hetu-project/causality_front.git
+[submodule "p2p/go-sdk"]
+	path = p2p/go-sdk
+	url = https://github.com/hetu-project/cRelay-go-sdk.git
+[submodule "p2p/js-sdk"]
+	path = p2p/js-sdk
+	url = https://github.com/hetu-project/cRelay-js-sdk.git
