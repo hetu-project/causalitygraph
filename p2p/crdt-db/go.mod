@@ -1,5 +1,4 @@
-module github.com/hetu-project/hetu-orbit
-
+module github.com/hetu-project/causalitygraph/p2p/crdt-db
 go 1.19
 
 require (

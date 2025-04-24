@@ -161,6 +161,7 @@ func main() {
 		log.Printf("Database created with address: %s", db.Address().String())
 	}
 	defer db.Close()
+
 }
 
 // getOrCreatePeerID loads or creates a peer ID
