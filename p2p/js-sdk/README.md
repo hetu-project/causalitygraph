@@ -1,14 +1,30 @@
-# ![](https://img.shields.io/github/actions/workflow/status/nbd-wtf/nostr-tools/test.yml) [![JSR](https://jsr.io/badges/@nostr/tools)](https://jsr.io/@nostr/tools) nostr-tools
+## Overview
 
-Tools for developing [Nostr](https://github.com/fiatjaf/nostr) clients.
+This project combines three key technologies:
 
-Only depends on _@scure_ and _@noble_ packages.
+1.  Nostr (decentralized messaging protocol)
+2.  Ethereum EIP-191 signatures (secure cryptographic signing)
+3.  VLC (Verifiable Logical Clock)
 
-This package is only providing lower-level functionality. If you want more higher-level features, take a look at [Nostrify](https://nostrify.dev), or if you want an easy-to-use fully-fledged solution that abstracts the hard parts of Nostr and makes decisions on your behalf, take a look at [NDK](https://github.com/nostr-dev-kit/ndk) and [@snort/system](https://www.npmjs.com/package/@snort/system).
+Together, these components enable:
+-   Decentralized authentication
+-   Secure message signing using Ethereum standards
+-   Distributed event ordering and causality tracking
+-   Message consistency in distributed systems
+
+This integration creates a robust system for secure, decentralized communication with verifiable event ordering.
 
 ## Installation
 
 ```bash
+# bun
+curl -fsSL https://bun.sh/install | bash
+
+# just for linux
+sudo apt install just
+# or for macOS
+brew install just
+
 # npm
 npm install --save nostr-tools
 
@@ -17,10 +33,6 @@ npx jsr add @nostr/tools
 ```
 
 If using TypeScript, this package requires TypeScript >= 5.0.
-
-## Documentation
-
-https://jsr.io/@nostr/tools/doc
 
 ## Usage
 
@@ -347,15 +359,3 @@ summary for relay read message and verify event
 ## Plumbing
 
 To develop `nostr-tools`, install [`just`](https://just.systems/) and run `just -l` to see commands available.
-
-## License
-
-This is free and unencumbered software released into the public domain. By submitting patches to this project, you agree to dedicate any and all copyright interest in this software to the public domain.
-
-## Contributing to this repository
-
-Use NIP-34 to send your patches to:
-
-```
-naddr1qq9kummnw3ez6ar0dak8xqg5waehxw309aex2mrp0yhxummnw3ezucn8qyt8wumn8ghj7un9d3shjtnwdaehgu3wvfskueqpzemhxue69uhhyetvv9ujuurjd9kkzmpwdejhgq3q80cvv07tjdrrgpa0j7j7tmnyl2yr6yr7l8j4s3evf6u64th6gkwsxpqqqpmejdv00jq
-```
