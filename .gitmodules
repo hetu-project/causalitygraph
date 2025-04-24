@@ -1,0 +1,6 @@
+[submodule "causality-dashboard/causality_front"]
+	path = causality-dashboard/causality_front
+	url = git@github.com:hetu-project/causality_front.git
+[submodule "causality-dash"]
+	path = causality-dash
+	url = git@github.com:hetu-project/causality_front.git
