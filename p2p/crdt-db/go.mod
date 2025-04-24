@@ -1,4 +1,5 @@
-module github.com/hetu-project/causalitygraph/p2p/crdt-db
+module github.com/hetu-project/causalitygraph
+
 go 1.19
 
 require (
