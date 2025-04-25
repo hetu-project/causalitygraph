@@ -5,6 +5,7 @@ A decentralized data collaboration network that achieves fast, verifiable causal
 ## Stack
 
 Causality Graph is built on a robust architecture integrating several key components: SDK, TEE relays, composite database and graph dashboard. Each component plays a crucial role in maintaining causal consistency of the decentralized data collaboration.
+![arch](graph_arch.png)
 
 ### SDK ###
 
