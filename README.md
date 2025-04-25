@@ -1,6 +1,6 @@
 # Hetu Causality Graph
 
-A decentralized data collaboration network that achieves fast, verifiable causality and data consistency on-chain through verifiable logical clocks and a POCW consensus protocol.
+A decentralized data collaboration network that achieves fast, verifiable causality and data consistency off-chain through verifiable logical clocks and a POCW consensus protocol.
 
 ## Stack
 
