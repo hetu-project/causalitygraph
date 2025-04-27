@@ -1,4 +1,4 @@
-# Causality Key with Nostr compatibility
+# Causality Key
 ## 1. Description
 
  This proposal integrates a Verifiable Logic Clock (VLC) into Nostr's event structure to enable decentralized message counting, identity and privilege management. User identities are bound to **ETH public key addresses** and events are signed using ETH signatures to ensure authenticity and non-repudiation. `tags` fields in Nostr events are used to encode VLC states and manage subspaces for VLC event statistics and fine-grained privilege control.
@@ -7,8 +7,8 @@
 
 - **Verifiable Logical Clock (VLC)**: Used to track event out-of-order in a distributed environment to ensure consistency.
 - **ETH Public Key and Signature Compatibility**: Link user identities to ETH public keys and verify them with ETH signatures.
-- **Subspace management**: Manage subspaces using custom event types ( `30100` for create, `30200` for join, `30300` for operate).
-- **Flexible permission declarations**: Implement `auth` tags for operation-specific permissions, including operation type, dimension, and expiration time.
+- **Subspace management**: Manage subspaces using custom event types ( `30100` for create, `30200` for join, `30300` and above for operations).
+- **Flexible permission declarations**: Implement `auth` tags for operation-specific permissions, including operation type, causality key, and expiration time.
 
 ---
 
@@ -36,24 +36,34 @@
 `The subspaceKey` defines the subspace identifier and operation clock, encoded in `tags`:
 
 ```bash
-message subspaceKey {
+message subspace {
   uint32 subspace_id = 1;    // Dimension 0: Subspace Identifier (32 bits)
-  // Dimension 1-31: Subspace operation clock (31×32 bits)
-  repeated uint32 clocks = 2 [packed=true]; 
+  // Subspace operation clock
+  repeated causalityKey keys = 2 [packed=true]; 
+}
+
+message causalityKey {
+		uint32 key = 1;       // causality key identifier
+		unt64  counter = 1;   // Lamport clock
 }
 ```
 
-- Dimension 1: Post
-- Dimension 2: Propose
-- Dimension 3: Vote
-- Dimension 4: Invite
+For example, 
+
+- Dimension 1: Post, causality key 30300
+- Dimension 2: Propose, causality key 30301
+- Dimension 3: Vote, causality key 30302
+- Dimension 4: Invite, causality key 30303
 - Other dimensions can be extended as needed.
-    - The following ModelGraph: model=5,data=6,compute=7,algo=8,valid=9
+    - The following ModelGraph:
+        - model=30304,data=30305,compute=30306,algo=30307,valid=30308
     - OR, auth is used to extend the definition of permissions
 
 ## 5. Generic Events
 
 ### 5.1 Subspace Creation Event (Kind 30100)
+
+Creating a subspace is equivalent to creating a set of causality keys.
 
 - Message body field description:
     - d: "subspace_create", d stands for define, used to define generic time type
@@ -73,8 +83,8 @@ message subspaceKey {
   "tags": [
     ["d", "subspace_create"],
     ["sid", "0xMG"],
-    ["subspace_name", "modelgraph"],
-    ["ops", "post=1,propose=2,vote=3,invite=4,model=5,data=6,compute=7,algo=8,valid=9"],
+    ["subspace_name", "governance"],
+    ["ops", "post=30300,propose=303001,vote=30302,invite=30303"],
     ["rules", "energy>1000"]
   ],
   "content": "{\"desc\":\"Desci AI model collaboration subspace\", \"img_url\": \"http://imge_addr.png\"}",
@@ -104,13 +114,50 @@ message subspaceKey {
 
 ### 5.3 Subspace Operation Events (Kind 30300)
 
-`Generic execution operations`: 1: Post, 2: Propose, 3: Vote, 4: Invite
+To facilitate protocol parsing, each operation (Post, Propose, Vote, Invite, Model, Data, Compute, Algo, Valid) is assigned a unique **Kind value**. The operation-specific information is defined in the tags field. 
+
+**5.3.1 Subspace Operation Events**
+
+The operations are listed in the following table:
+
+- First subspace is `governance subspace`，it contains a set of causality keys:
+    - 30300: Post, 30301: Propose, 30302: Vote, 30303: Invite
+
+| Kind Value | Event Name | Purpose | Key Tags Structure |
+| --- | --- | --- | --- |
+| 30300 | Post | Publish content (e.g., announcements, documents) in the subspace | ["auth", "d":"subspace_op", "sid", "content_type", "parent"] |
+| 30301 | Propose | Propose subspace rules or operations, requiring subsequent voting | ["auth", "d":"subspace_op", "sid", "proposal_id", "rules"] |
+| 30302 | Vote | Vote on proposals for decentralized decision-making | ["auth", "d":"subspace_op", "sid", "proposal_id", "vote"] |
+| 30303 | Invite | Invite new members to join the subspace | ["auth", "d":"subspace_op", "sid", "invitee_pubkey", "rules"] |
+
+**5.3.2 Generic Operation Event Structure**
+
+```json
+{
+  "id": "<32 bytes lowercase hex-encoded sha256 hash of the serialized event data>",
+  "pubkey": "<32 bytes lowercase hex-encoded ETH address of the event creator>", 
+  "created_at": "<Unix timestamp in seconds>",
+  "kind": "<30300-30308>",
+  "tags": [
+    ["auth", "action=<mask>", "key=<key-Id>", "exp=<expiration clock>"],
+    ["d", "subspace_op"],
+    ["sid", "<subspace ID>"],
+    // Operation-specific tags
+  ],
+  "content": "<opration content>",
+  "sig": "<ETH signature>"
+}
+```
+
+- auth tag: Defines permissions with action (mask: 1=read, 2=write, 4=execute), key (causality key ID), and exp (expiration clock value).
+
+**5.3.3 Case examples**
 
 **1: Post (publish content)**: share knowledge, post updates
 
 - Description: user posts content (e.g. announcements, documents) in the subspace.
 - Message body:
-    - ops: "post"
+    - op: "post"
     - content_type: content type (e.g. "text", "markdown", "ipfs")
     - Optional: parent (reference to parent event hash)
 - Example: Alice posts an announcement in subspace:
@@ -120,12 +167,11 @@ message subspaceKey {
   "id": "<32 bytes lowercase hex-encoded sha256 hash of the serialized event data>",
   "pubkey": "<32 bytes lowercase hex-encoded ETH address of the event creator>", // Alice's ETH address
   "created_at": "<Unix timestamp in seconds>",
-  "kind": 30200,
+  "kind": 30300,
   "tags": [
-    // ["auth", "action=2", "dim=1", "exp=500000"],
-    ["d", "subnet_op"],
+    ["d", "subspace_op"],
     ["sid", "0xMG"],
-    ["ops", "post"],
+    ["op", "post"],
     ["content_type", "markdown"],
     ["parent", "parent-hash"]
   ],
@@ -138,7 +184,7 @@ message subspaceKey {
 
 - DESCRIPTION: User proposes a subspace rule or operation that requires a subsequent vote.
 - Message body:
-    - ops: "propose"
+    - op: "propose"
     - proposal_id: proposal unique identifier
     - rules: proposed rules (e.g. "energy>2000")
 - Example: Bob makes a proposal to raise the subspace join threshold:
@@ -148,12 +194,11 @@ message subspaceKey {
   "id": "<32 bytes lowercase hex-encoded sha256 hash of the serialized event data>",
   "pubkey": "<32 bytes lowercase hex-encoded ETH address of the event creator>", // Bob's ETH address
   "created_at": "<Unix timestamp in seconds>",
-  "kind": 30200,
+  "kind": 30301,
   "tags": [
-    // ["auth", "action=2", "dim=2", "exp=500000"],
-    ["d", "subnet_op"],
+    ["d", "subspace_op"],
     ["sid", "0xMG"],
-    ["ops", "propose"],
+    ["op", "propose"],
     ["proposal_id", "prop_001"],
     ["rules", "energy>2000"]
   ],
@@ -166,7 +211,7 @@ message subspaceKey {
 
 - DESCRIPTION: Users vote on suggestions.
 - Message body:
-    - ops: "vote"
+    - op: "vote"
     - proposal_id: Identifier of the proposal that is the target of the vote
     - vote: vote value (e.g. "yes", "no")
 - Example: Alice votes on Bob's proposal:
@@ -176,12 +221,12 @@ message subspaceKey {
   "id": "<32 bytes lowercase hex-encoded sha256 hash of the serialized event data>",
   "pubkey": "<32 bytes lowercase hex-encoded ETH address of the event creator>", // Alice's ETH address
   "created_at": "<Unix timestamp in seconds>",
-  "kind": 30200,
+  "kind": 30302,
   "tags": [
     ["auth", "action=2", "dim=3", "exp=500000"],
-    ["d", "subnet_op"],
+    ["d", "subspace_op"],
     ["sid", "0xMG"],
-    ["ops", "vote"],
+    ["op", "vote"],
     ["proposal_id", "prop_001"],
     ["vote", "yes"],
   ],
@@ -194,7 +239,7 @@ message subspaceKey {
 
 - DESCRIPTION: The user invites new members to join the subspace.
 - Message body:
-    - ops: "invite"
+    - op: "invite"
     - invitee_pubkey: ETH public key of the invitee
     - Optional: rules (join rules)
 - Example: Alice invites Charlie to join the subspace:
@@ -204,12 +249,12 @@ message subspaceKey {
   "id": "<32 bytes lowercase hex-encoded sha256 hash of the serialized event data>",
   "pubkey": "<32 bytes lowercase hex-encoded ETH address of the event creator>", // Alice's ETH address
   "created_at": "<Unix timestamp in seconds>",
-  "kind": 30200,
+  "kind": 30303,
   "tags": [
     ["auth", "action=2", "dim=4", "exp=500000"],
-    ["d", "subnet_op"],
+    ["d", "subspace_op"],
     ["sid", "0xMG"],
-    ["ops", "invite"],
+    ["op", "invite"],
     ["invitee_pubkey", "<Charlie’s ETH address>"],
     ["rules", "energy>1000"]
   ],
@@ -218,21 +263,50 @@ message subspaceKey {
 }
 ```
 
+**5.3.4 Define a subspace (eg: modelgraph)**
+
 `Business Execution Operations`: 5: model, 6: data, 7: compute, 8: algo, 9: valid
 
-**5: Model (upload model)**: (e.g., model operations):
+| 30304 | Model | Submit a new model version | ["auth", "d":"subspace_op", "sid", "parent", "contrib"] |
+| --- | --- | --- | --- |
+| 30305 | Data | Submit training datasets | ["auth", "d":"subspace_op", "sid", "size"] |
+| 30306 | Compute | Submit computational tasks | ["auth", "d":"subspace_op", "sid", "compute_type"] |
+| 30307 | Algo | Submit algorithm code or updates | ["auth", "d":"subspace_op", "sid", "algo_type"] |
+| 30308 | Valid | Submit validation task results | ["auth", "d":"subspace_op", "sid", "valid_result"] |
+
+**5.3.4.1 Create a** modelgraph
 
 ```json
 {
   "id": "<32 bytes lowercase hex-encoded sha256 hash of the serialized event data>",
   "pubkey": "<32 bytes lowercase hex-encoded ETH address of the event creator>", // ETH public key can be recovered from the signature
   "created_at": "<Unix timestamp in seconds>",
-  "kind": 30300,
+  "kind": 30100,
+  "tags": [
+    ["d", "subspace_create"],
+    ["sid", "0xMG"],
+    ["subspace_name", "modelgraph"],
+    ["ops", "post=30300,propose=303001,vote=30302,invite=30303,model=30304,data=30305,compute=30306,algo=30307,valid=30308"],
+    ["rules", "energy>1000"]
+  ],
+  "content": "{\"desc\":\"Desci AI model collaboration subspace\", \"img_url\": \"http://imge_addr.png\"}",
+  "sig": "<ETH signature>"
+}
+```
+
+**5.3.4.2 Model (upload model)**: (e.g., model operations):
+
+```json
+{
+  "id": "<32 bytes lowercase hex-encoded sha256 hash of the serialized event data>",
+  "pubkey": "<32 bytes lowercase hex-encoded ETH address of the event creator>", // ETH public key can be recovered from the signature
+  "created_at": "<Unix timestamp in seconds>",
+  "kind": 30304,
   "tags": [
     ["auth", "action=3", "dim=4", "exp=500000"],
     ["d", "subspace_op"],
     ["sid", "0xMG"],
-    ["ops", "model"],    // model=5, data=6, compute=7, algo=8, valid=9
+    ["op", "model"],
     ["parent", "parent-hash"], // parent event hash
     ["contrib", "base:0.1", "data:0.6", "algo:0.3"],
   ],
@@ -292,23 +366,6 @@ message subspaceKey {
 
  For `generic execution operations`, see the Post, Propose, Vote, and Invite operation examples above.
 
- Alice performs a business model operation:
+---
 
-```json
-{
-  "id": "<32-bytes lowercase hex-encoded sha256 hash of the serialized event data>",
-  "pubkey": "<32-bytes lowercase hex-encoded ETH address of the event creator>", // Alice ETH address
-  "created_at": "<Unix timestamp in seconds>",
-  "kind": 30300,
-  "tags": [
-    ["auth", "action=3", "dim=4", "exp=500000"],
-    ["d", "subspace_op"],
-    ["sid", "0xMG"],
-    ["ops", "model"],
-    ["parent", "parent-hash"],
-    ["contrib", "base:0.1", "data:0.6", "algo:0.3"]
-  ],
-  "content": "ipfs://bafy...",
-  "sig": "<Alice ETH signature>"
-}
-```
+ The proposal introduces a novel decentralized approach to identity management by integrating VLC with Nostr. VLC ensures partial ordering of events without the need for a global clock, while ETH signatures provide authenticity of identities. Challenges include potential clock synchronization issues in the context of network partitioning, the need for a robust `auth` tag design, and scalability as subspaces and events grow. Future work could optimize VLC, enhance permission mechanisms, and explore integration with other decentralized technologies.
