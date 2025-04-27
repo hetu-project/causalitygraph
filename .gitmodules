@@ -13,6 +13,6 @@
 [submodule "p2p/crdt-db"]
 	path = p2p/crdt-db
 	url = https://github.com/hetu-project/cRelay-crdt-db.git
-[submodule "p2p/p2p/cRelay"]
-	path = p2p/p2p/cRelay
+[submodule "p2p/cRelay"]
+	path = p2p/cRelay
 	url = https://github.com/hetu-project/cRelay-nak.git
