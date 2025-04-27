@@ -10,3 +10,6 @@
 [submodule "p2p/js-sdk"]
 	path = p2p/js-sdk
 	url = https://github.com/hetu-project/cRelay-js-sdk.git
+[submodule "p2p/crdt-db"]
+	path = p2p/crdt-db
+	url = https://github.com/hetu-project/cRelay-crdt-db.git
