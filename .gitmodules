@@ -16,3 +16,6 @@
 [submodule "p2p/cRelay"]
 	path = p2p/cRelay
 	url = https://github.com/hetu-project/cRelay-nak.git
+[submodule "p2p/go-orbit-db"]
+	path = p2p/go-orbit-db
+	url = https://github.com/hetu-project/cRelay-go-orbit-db.git
