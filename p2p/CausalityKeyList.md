@@ -21,7 +21,7 @@ A set of keys can be converted into VLC, representing causality
 | 30100 | Subspace Create | Create a new subspace with defined operations and rules | ["d":"subspace_create", "sid", "subspace_name", "ops", "rules"] |
 | 30200 | Subspace Join | Allow a user to join an existing subspace | ["d":"subspace_join", "sid", "rules"] |
 
-### Governance Subspace (HIP 30)
+### Governance Subspace (CIP 01)
 
 | Kind Value | Event Name | Purpose | Key Tags Structure |
 | --- | --- | --- | --- |
@@ -30,7 +30,7 @@ A set of keys can be converted into VLC, representing causality
 | 30302 | Vote | Vote on proposals for decentralized decision-making | ["auth", "d":"subspace_op", "sid", "proposal_id", "vote"] |
 | 30303 | Invite | Invite new members to join the subspace | ["auth", "d":"subspace_op", "sid", "invitee_pubkey", "rules"] |
 
-### ModelGraph Subspace (HIP 31)
+### ModelGraph Subspace (CIP 02)
 
 | 30304 | Model | Submit a new model version | ["auth", "d":"subspace_op", "sid", "parent", "contrib"] |
 | --- | --- | --- | --- |
