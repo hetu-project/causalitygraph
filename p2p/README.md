@@ -1,6 +1,6 @@
 # P2P Project Overview
 
-The `p2p` folder contains multiple subprojects and tools focused on the [Causality Key](./CausalityKeyWithNostr.md) with Nostr protocol and distributed systems development. It provides extensive functionality, including causality subspace lifecycle managing, general action configuration templates, causality graph generation, logical clock implementation, Ethereum [EIP-191]((https://eips.ethereum.org/EIPS/eip-191)) signing, key generation, message publishing, and more.
+The `p2p` folder contains multiple subprojects and tools focused on the [Causality Key](./CausalityKey.md) with Nostr protocol and distributed systems development. It provides extensive functionality, including causality subspace lifecycle managing, general action configuration templates, causality graph generation, logical clock implementation, Ethereum [EIP-191]((https://eips.ethereum.org/EIPS/eip-191)) signing, key generation, message publishing, and more.
 
 ## Project Structure
 
@@ -46,7 +46,7 @@ The `p2p` folder contains multiple subprojects and tools focused on the [Causali
 - Provides tools for encoding and decoding common formats.
 - Includes event templates for standardized event creation.
 - Enables key generation and public/private key conversion.
-- Implements [Causality Key](./CausalityKeyWithNostr.md) protocol extensions for extending nostr 's capacity.
+- Implements [Causality Key](./CausalityKey.md) protocol extensions for extending nostr 's capacity.
 
 ### `zeb`
 - Implements a P2P relay network with VLC support.
