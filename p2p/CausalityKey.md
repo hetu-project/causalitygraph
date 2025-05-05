@@ -1,4 +1,4 @@
-# Causality Key
+# Causality Key Event
 ## 1. Description
 
  This proposal integrates a Verifiable Logic Clock (VLC) into Nostr's event structure to enable decentralized message counting, identity and privilege management. User identities are bound to **ETH public key addresses** and events are signed using ETH signatures to ensure authenticity and non-repudiation. `tags` fields in Nostr events are used to encode VLC states and manage subspaces for VLC event statistics and fine-grained privilege control.
