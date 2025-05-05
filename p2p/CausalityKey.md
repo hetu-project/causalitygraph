@@ -367,5 +367,3 @@ The operations are listed in the following table:
  For `generic execution operations`, see the Post, Propose, Vote, and Invite operation examples above.
 
 ---
-
- The proposal introduces a novel decentralized approach to identity management by integrating VLC with Nostr. VLC ensures partial ordering of events without the need for a global clock, while ETH signatures provide authenticity of identities. Challenges include potential clock synchronization issues in the context of network partitioning, the need for a robust `auth` tag design, and scalability as subspaces and events grow. Future work could optimize VLC, enhance permission mechanisms, and explore integration with other decentralized technologies.
