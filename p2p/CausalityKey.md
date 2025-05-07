@@ -43,8 +43,8 @@ message subspace {
 }
 
 message causalityKey {
-		uint32 key = 1;       // causality key identifier
-		unt64  counter = 1;   // Lamport clock
+	uint32 key = 1;       // causality key identifier
+	unt64  counter = 1;   // Lamport clock
 }
 ```
 
@@ -142,6 +142,7 @@ The operations are listed in the following table:
     ["auth", "action=<mask>", "key=<key-Id>", "exp=<expiration clock>"],
     ["d", "subspace_op"],
     ["sid", "<subspace ID>"],
+    ["parent", "parent-hash"]
     // Operation-specific tags
   ],
   "content": "<opration content>",
@@ -159,7 +160,7 @@ The operations are listed in the following table:
 - Message body:
     - op: "post"
     - content_type: content type (e.g. "text", "markdown", "ipfs")
-    - Optional: parent (reference to parent event hash)
+    - parent: parent event hash set (reference to parent event hash)
 - Example: Alice posts an announcement in subspace:
 
 ```json
@@ -173,7 +174,7 @@ The operations are listed in the following table:
     ["sid", "0xMG"],
     ["op", "post"],
     ["content_type", "markdown"],
-    ["parent", "parent-hash"]
+    ["parent", "parent-hash", "..."]
   ],
   "content": "# Subspace Update\nWe have completed model optimization!",
   "sig": "<ETH signature>"
@@ -186,6 +187,7 @@ The operations are listed in the following table:
 - Message body:
     - op: "propose"
     - proposal_id: proposal unique identifier
+    - parent: parent event hash set (reference to parent event hash)
     - rules: proposed rules (e.g. "energy>2000")
 - Example: Bob makes a proposal to raise the subspace join threshold:
 
@@ -200,6 +202,7 @@ The operations are listed in the following table:
     ["sid", "0xMG"],
     ["op", "propose"],
     ["proposal_id", "prop_001"],
+    ["parent", "parent-hash", "..."]
     ["rules", "energy>2000"]
   ],
   "content": "Proposal to raise the energy requirement for joining the subspace to 2000",
@@ -213,6 +216,7 @@ The operations are listed in the following table:
 - Message body:
     - op: "vote"
     - proposal_id: Identifier of the proposal that is the target of the vote
+    - parent: parent event hash set (reference to parent event hash)
     - vote: vote value (e.g. "yes", "no")
 - Example: Alice votes on Bob's proposal:
 
@@ -228,6 +232,7 @@ The operations are listed in the following table:
     ["sid", "0xMG"],
     ["op", "vote"],
     ["proposal_id", "prop_001"],
+    ["parent", "parent-hash", "..."]
     ["vote", "yes"],
   ],
   "content": "Agree to raise the energy requirement",
@@ -240,14 +245,15 @@ The operations are listed in the following table:
 - DESCRIPTION: The user invites new members to join the subspace.
 - Message body:
     - op: "invite"
-    - invitee_pubkey: ETH public key of the invitee
+    - inviter_addr: ETH public key of the inviter
+    - parent: parent event hash set (reference to parent event hash)
     - Optional: rules (join rules)
 - Example: Alice invites Charlie to join the subspace:
 
 ```json
 {
   "id": "<32 bytes lowercase hex-encoded sha256 hash of the serialized event data>",
-  "pubkey": "<32 bytes lowercase hex-encoded ETH address of the event creator>", // Alice's ETH address
+  "pubkey": "<32 bytes lowercase hex-encoded ETH address of the event creator>", // Charlie's ETH address
   "created_at": "<Unix timestamp in seconds>",
   "kind": 30303,
   "tags": [
@@ -255,7 +261,8 @@ The operations are listed in the following table:
     ["d", "subspace_op"],
     ["sid", "0xMG"],
     ["op", "invite"],
-    ["invitee_pubkey", "<Charlie’s ETH address>"],
+    ["inviter_addr", "<Alice’s ETH address>"],
+    ["parent", "parent-hash", "..."]
     ["rules", "energy>1000"]
   ],
   "content": "Invite Charlie to join the Desci AI subspace",
