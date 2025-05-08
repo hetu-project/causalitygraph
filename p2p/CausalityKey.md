@@ -128,7 +128,8 @@ The operations are listed in the following table:
 | 30300 | Post | Publish content (e.g., announcements, documents) in the subspace | ["auth", "d":"subspace_op", "sid", "content_type", "parent"] |
 | 30301 | Propose | Propose subspace rules or operations, requiring subsequent voting | ["auth", "d":"subspace_op", "sid", "proposal_id", "rules"] |
 | 30302 | Vote | Vote on proposals for decentralized decision-making | ["auth", "d":"subspace_op", "sid", "proposal_id", "vote"] |
-| 30303 | Invite | Invite new members to join the subspace | ["auth", "d":"subspace_op", "sid", "invitee_pubkey", "rules"] |
+| 30303 | Invite | Invite new members to join the subspace | ["auth", "d":"subspace_op", "sid", "inviter_addr", "rules"] |
+| 30304	| mint	| mint credit token, and issue to membership in community	| ["auth", "d":"subspace_op", "sid", "token_name", "token_symbol",”token_decimals”,”initial_supply”] |
 
 **5.3.2 Generic Operation Event Structure**
 
@@ -269,17 +270,53 @@ The operations are listed in the following table:
   "sig": "<ETH signature>"
 }
 ```
+**5: Mint (mint erc20 & airdrop)**
+
+- Description: mint credit token, and issue to membership in community
+- Message body:
+    - op: "mint"
+    - parent: parent (reference to parent event hash)
+    - token related:
+    - token_name: token name Token name
+    - token_synbol: token symbol Token symbol
+    - token_decimals:  token decimals Token decimals
+    - initial_supply: initialSupply Initial amount to mint (in token units, not wei)
+    - drop_ratio: Each causality key proportion when token distribution
+- Example: Alice mint credit token in subspace:
+
+```json
+{
+  "id": "<32 bytes lowercase hex-encoded sha256 hash of the serialized event data>",
+  "pubkey": "<32 bytes lowercase hex-encoded ETH address of the event creator>", // Alice's ETH address
+  "created_at": "<Unix timestamp in seconds>",
+  "kind": 30304,
+  "tags": [
+    ["d", "subspace_op"],
+    ["sid", "0xMG"],
+    ["op", "mint"],
+    ["parent", "parent-hash"]
+    ["token_name", "sub-name"],
+    ["token_symbol", "SYM"],
+    ["token_decimals", "18"],
+    ["initial_supply", "100"],
+    ["drop_ratio", "30300:2,30301:2,30302:1,30303:3,30304:10"],
+  ],
+  "content": "",
+  "sig": "<ETH signature>"
+}
+```
 
 **5.3.4 Define a subspace (eg: modelgraph)**
 
 `Business Execution Operations`: 5: model, 6: data, 7: compute, 8: algo, 9: valid
 
-| 30304 | Model | Submit a new model version | ["auth", "d":"subspace_op", "sid", "parent", "contrib"] |
+| Kind Value | Event Name | Purpose | Key Tags Structure |
 | --- | --- | --- | --- |
-| 30305 | Data | Submit training datasets | ["auth", "d":"subspace_op", "sid", "size"] |
-| 30306 | Compute | Submit computational tasks | ["auth", "d":"subspace_op", "sid", "compute_type"] |
-| 30307 | Algo | Submit algorithm code or updates | ["auth", "d":"subspace_op", "sid", "algo_type"] |
-| 30308 | Valid | Submit validation task results | ["auth", "d":"subspace_op", "sid", "valid_result"] |
+| 30404 | Model | Submit a new model version | ["auth", "d":"subspace_op", "sid", "parent", "contrib"] |
+| 30405 | Data | Submit training datasets | ["auth", "d":"subspace_op", "sid", "size"] |
+| 30406 | Compute | Submit computational tasks | ["auth", "d":"subspace_op", "sid", "compute_type"] |
+| 30407 | Algo | Submit algorithm code or updates | ["auth", "d":"subspace_op", "sid", "algo_type"] |
+| 30408 | Valid | Submit validation task results | ["auth", "d":"subspace_op", "sid", "valid_result"] |
 
 **5.3.4.1 Create a** modelgraph
 

@@ -29,12 +29,13 @@ A set of keys can be converted into VLC, representing causality
 | 30301 | Propose | Propose subspace rules or operations, requiring subsequent voting | ["auth", "d":"subspace_op", "sid", "proposal_id", "rules"] |
 | 30302 | Vote | Vote on proposals for decentralized decision-making | ["auth", "d":"subspace_op", "sid", "proposal_id", "vote"] |
 | 30303 | Invite | Invite new members to join the subspace | ["auth", "d":"subspace_op", "sid", "invitee_pubkey", "rules"] |
+| 30304	| mint	| mint credit token, and issue to membership in community	| ["auth", "d":"subspace_op", "sid", "token_name", "token_symbol",”token_decimals”,”initial_supply”] |
 
 ### ModelGraph Subspace (CIP 02)
 
-| 30304 | Model | Submit a new model version | ["auth", "d":"subspace_op", "sid", "parent", "contrib"] |
+| 30404 | Model | Submit a new model version | ["auth", "d":"subspace_op", "sid", "parent", "contrib"] |
 | --- | --- | --- | --- |
-| 30305 | Data | Submit training datasets | ["auth", "d":"subspace_op", "sid", "size"] |
-| 30306 | Compute | Submit computational tasks | ["auth", "d":"subspace_op", "sid", "compute_type"] |
-| 30307 | Algo | Submit algorithm code or updates | ["auth", "d":"subspace_op", "sid", "algo_type"] |
-| 30308 | Valid | Submit validation task results | ["auth", "d":"subspace_op", "sid", "valid_result"] |
+| 30405 | Data | Submit training datasets | ["auth", "d":"subspace_op", "sid", "size"] |
+| 30406 | Compute | Submit computational tasks | ["auth", "d":"subspace_op", "sid", "compute_type"] |
+| 30407 | Algo | Submit algorithm code or updates | ["auth", "d":"subspace_op", "sid", "algo_type"] |
+| 30408 | Valid | Submit validation task results | ["auth", "d":"subspace_op", "sid", "valid_result"] |
