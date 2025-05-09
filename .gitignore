@@ -10,7 +10,6 @@ duid.py
 addedge.py
 adduser.py
 ap.py
-test*
 config.py
 .DS_Store
 **/.DS_Store
@@ -28,6 +27,16 @@ package-lock.json
 lib
 test.html
 bench.js
+
+.env
+coverage
+coverage.json
+typechain
+typechain-types
+
+# Hardhat files
+cache
+artifacts
 
 # golang
 nak
