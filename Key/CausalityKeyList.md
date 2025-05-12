@@ -33,9 +33,19 @@ A set of keys can be converted into VLC, representing causality
 
 ### ModelGraph Subspace (CIP 02)
 
-| 30404 | Model | Submit a new model version | ["auth", "d":"subspace_op", "sid", "parent", "contrib"] |
+| Kind Value | Event Name | Purpose | Key Tags Structure |
 | --- | --- | --- | --- |
+| 30404 | Model | Submit a new model version | ["auth", "d":"subspace_op", "sid", "parent", "contrib"] |
 | 30405 | Data | Submit training datasets | ["auth", "d":"subspace_op", "sid", "size"] |
 | 30406 | Compute | Submit computational tasks | ["auth", "d":"subspace_op", "sid", "compute_type"] |
 | 30407 | Algo | Submit algorithm code or updates | ["auth", "d":"subspace_op", "sid", "algo_type"] |
 | 30408 | Valid | Submit validation task results | ["auth", "d":"subspace_op", "sid", "valid_result"] |
+
+### Token Operations (CIP 03)
+
+| Kind Value | Event Name | Purpose | Key Tags Structure |
+| --- | --- | --- | --- |
+| 30320 | Issue Token | Create and configure a new token | ["symbol", "name", "decimals"] |
+| 30321 | Transfer | Transfer tokens between accounts | ["from", "to", "symbol", "amount"] |
+| 30322 | Approve | Authorize another account to spend tokens | ["spender", "symbol", "amount"] |
+| 30323 | MintCredit | Create new tokens based on predefined rules | ["symbol", "mint_if", "tag_key", "tag_value", "threshold", "mint_amount"] |

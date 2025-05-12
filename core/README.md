@@ -1,10 +1,10 @@
-# P2P Project Overview
+# Core Protocol Overview
 
-The `p2p` folder contains multiple subprojects and tools focused on the [Causality Key](./CausalityKey.md) with Nostr protocol and distributed systems development. It provides extensive functionality, including causality subspace lifecycle managing, general action configuration templates, causality graph generation, logical clock implementation, Ethereum [EIP-191](https://eips.ethereum.org/EIPS/eip-191) signing, key generation, message publishing, and more.
+The `core` folder contains multiple subprojects and tools focused on the [Causality Key](../Key/CausalityKey.md) with Nostr protocol and distributed systems development. It provides extensive functionality, including causality subspace lifecycle managing, general action configuration templates, causality graph generation, logical clock implementation, Ethereum [EIP-191](https://eips.ethereum.org/EIPS/eip-191) signing, key generation, message publishing, and more.
 
-## Project Structure
+## Structure
 
-- **`cRalay/`**: A powerful Nostr relayer with causality-graph supporting event distributed storage, event causality ordering by [VLC (Virtual Logical Clock)](https://github.com/hetu-project/chronos.git), event querying, configurable business subspace management, and more.
+- **`cRelay/`**: A powerful Nostr relayer with causality-graph supporting event distributed storage, event causality ordering by [VLC (Virtual Logical Clock)](https://github.com/hetu-project/chronos.git), event querying, configurable business subspace management, and more.
 - **`crdt-db/`**: Contains documentation and implementation related to CRDT databases.
 - **`go-sdk/`**: A Go-based SDK offering Ethereum EIP-191 signing, event templates, event handling, benchmarking, and more.
 - **`js-sdk/`**: A JavaScript-based SDK supporting subspace lifecycle managing, Ethereum event signing, common encoding/decoding, and more.
@@ -46,7 +46,7 @@ The `p2p` folder contains multiple subprojects and tools focused on the [Causali
 - Provides tools for encoding and decoding common formats.
 - Includes event templates for standardized event creation.
 - Enables key generation and public/private key conversion.
-- Implements [Causality Key](./CausalityKey.md) protocol extensions for extending Nostr's capacity.
+- Implements [Causality Key](../Key/CausalityKey.md) protocol extensions for extending Nostr's capacity.
 
 ### `zeb`
 - Implements a P2P relay network with VLC support.

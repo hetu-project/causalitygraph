@@ -7,7 +7,7 @@ This document outlines a proposed standard for implementing tokens on the causal
 *   **Issue Token:** Defines the initial creation and configuration of a token.
 *   **Transfer:**  Specifies how tokens are transferred between accounts.
 *   **Approve:**  Allows one account to authorize another to spend tokens on its behalf.
-*   **Mint:**  Defines the process for creating new tokens based on predefined rules.
+*   **MintCredit:**  Defines the process for creating new tokens based on predefined rules.
 *   **Total Supply:** (RPC/RESTful API) Provides the total number of tokens in circulation.
 *   **Balance Of:** (RPC/RESTful API) Returns the token balance of a specific account.
 *   **Allowance:** (RPC/RESTful API)  Returns the amount of tokens that one account is allowed to spend on behalf of another.
@@ -17,14 +17,14 @@ This document outlines a proposed standard for implementing tokens on the causal
 
 This standard utilizes specific event kinds to represent different token operations.
 
-### Issue Token (Kind 30300)
+### Issue Token (Kind 30320)
 
 This event is used to issue a new token.
 
 ```json
 {
   "id": "...",
-  "kind": 30300,
+  "kind": 30320,
   "pubkey": "<issuer_pubkey>",
   "created_at": 1710000000,
   "tags": [
@@ -42,13 +42,13 @@ name: The token name (e.g., "new Coin").
 
 decimals: The number of decimal places the token supports (e.g., "6").
 
-### Transfer (Kind 30301)
+### Transfer (Kind 30321)
 
 This event represents a token transfer between two accounts.
 
 ```JSON
 {
-  "kind": 30301,
+  "kind": 30321,
   "pubkey": "<sender_pubkey>",
   "created_at": 1710000123,
   "tags": [
@@ -70,13 +70,13 @@ symbol: The token symbol.
 
 amount: The amount of tokens being transferred (in the smallest unit).
 
-### Approve (Kind 30302)
+### Approve (Kind 30322)
 
 This event allows one account to authorize another to spend tokens on its behalf.
 
 ```JSON
 {
-  "kind": 30302,
+  "kind": 30322,
   "pubkey": "<owner_pubkey>",
   "tags": [
     ["spender", "<spender_pubkey>"],
@@ -93,7 +93,7 @@ symbol: The token symbol.
 
 amount: The maximum amount of tokens the spender is allowed to spend (in the smallest unit).
 
-### Mint (Kind 30303)
+### MintCredit (Kind 30323)
 
 This event represents the creation of new tokens based on predefined rules. Two methods are supported: multiple events, each representing a single rule, or a single event embedding multiple rules.
 
@@ -102,7 +102,7 @@ Method 1: Multiple Events (Single Rule per Event)
 ```JSON
 [
   {
-    "kind": 30303,
+    "kind": 30323,
     "pubkey": "<issuer_pubkey>",
     "created_at": 1712420000,
     "tags": [
@@ -117,7 +117,7 @@ Method 1: Multiple Events (Single Rule per Event)
     "sig": "..."
   },
   {
-    "kind": 30303,
+    "kind": 30323,
     "pubkey": "<issuer_pubkey>",
     "tags": [
       ["symbol", "NOST"],
@@ -136,12 +136,12 @@ Method 2: Single Event (Multiple Rules)
 
 ```JSON
 {
-  "kind": 30303,
+  "kind": 30323,
   "tags": [
     ["rule", "symbol=NOST", "mint_if=30023", "tag_key=e", "tag_value=any", "threshold=10", "mint_amount=1000000"],
     ["rule", "symbol=NOST", "mint_if=30011", "tag_key=p", "tag_value=<some_pubkey>", "threshold=3", "mint_amount=500000"]
   ],
-  "content": "Multi-rule mint configuration",
+  "content": "Multi-rule MintCredit configuration",
   "sig": "..."
 }
 ```
@@ -153,9 +153,9 @@ tag_key: The tag key to check in the triggering event (e.g., "e" for event refer
 
 tag_value: The specific tag value to match (can be a specific event ID or "any").
 
-threshold: The minimum number of matching events required to trigger the mint.
+threshold: The minimum number of matching events required to trigger the MintCredit.
 
-mint_amount: The amount of tokens to mint (in the smallest unit).
+mint_amount: The amount of tokens to MintCredit (in the smallest unit).
 
 ### Query Interface
 A rule parsing service will provide an interface for querying token information.
