@@ -1,21 +1,18 @@
-[submodule "causality-dashboard/causality_front"]
-	path = causality-dashboard/causality_front
-	url = git@github.com:hetu-project/causality_front.git
 [submodule "causality-dash"]
 	path = causality-dash
-	url = git@github.com:hetu-project/causality_front.git
-[submodule "p2p/go-sdk"]
-	path = p2p/go-sdk
+	url = https://github.com/hetu-project/causality_front.git
+[submodule "core/go-sdk"]
+	path = core/go-sdk
 	url = https://github.com/hetu-project/cRelay-go-sdk.git
-[submodule "p2p/js-sdk"]
-	path = p2p/js-sdk
+[submodule "core/js-sdk"]
+	path = core/js-sdk
 	url = https://github.com/hetu-project/cRelay-js-sdk.git
-[submodule "p2p/crdt-db"]
-	path = p2p/crdt-db
+[submodule "core/crdt-db"]
+	path = core/crdt-db
 	url = https://github.com/hetu-project/cRelay-crdt-db.git
-[submodule "p2p/cRelay"]
-	path = p2p/cRelay
+[submodule "core/cRelay"]
+	path = core/cRelay
 	url = https://github.com/hetu-project/cRelay-nak.git
-[submodule "p2p/go-orbit-db"]
-	path = p2p/go-orbit-db
+[submodule "core/go-orbit-db"]
+	path = core/go-orbit-db
 	url = https://github.com/hetu-project/cRelay-go-orbit-db.git
