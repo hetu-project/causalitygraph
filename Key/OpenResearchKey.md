@@ -32,6 +32,7 @@ Creating a research subspace with specialized operation types:
     ["d", "subspace_create"],
     ["sid", "0xOR"],
     ["subspace_name", "openresearch"],
+    ["category","ai"],
     ["ops", "paper=30501,annotation=30502,review=30503,task=30504,graph=30505,ai_analysis=30506,discussion=30507"],
     ["rules", "energy>500"]
   ],
@@ -70,7 +71,7 @@ Used to submit, index, or reference a research paper in the system.
     ["sid", "0xOR"],
     ["op", "paper"],
     ["doi", "10.xxxx/xxxxx"],
-    ["paper_type", "article"],
+    ["paper_type", "html/pdf/article"],
     ["authors", "Author1,Author2,Author3"],
     ["keywords", "keyword1,keyword2,keyword3"],
     ["year", "2023"],

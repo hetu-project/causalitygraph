@@ -84,6 +84,7 @@ Creating a subspace is equivalent to creating a set of causality keys.
     ["d", "subspace_create"],
     ["sid", "0xMG"],
     ["subspace_name", "governance"],
+    ["category","web3"],
     ["ops", "post=30300,propose=303001,vote=30302,invite=30303"],
     ["rules", "energy>1000"]
   ],

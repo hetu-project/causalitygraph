@@ -30,7 +30,7 @@ The Hetu Causality Key Protocol is a foundational component of the Hetu Causalit
 
 Refer to the [CausalityKeyList.md](./CausalityKeyList.md) for a comprehensive list of event kinds, including governance and token operations.
 
-## Token Protocol Standard
+### Token Protocol Standard
 
 The [Key_Token_Protocol_Standard.md](./Key_Token_Protocol_Standard.md) outlines the implementation of token operations, including:
 - **Issue Token (Kind 30320):** Create and configure new tokens.
