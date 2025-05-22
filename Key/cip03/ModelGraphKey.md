@@ -39,7 +39,7 @@ The subspace creation event is updated to include new operation types for conver
     ["sid", "0xMG"],
     ["subspace_name", "modelgraph"],
     ["category", "ai"],
-    ["ops", "project=30101,task=30102,post=30300,propose=303001,vote=30302,invite=30303,mint=30304,dataset=30405,finetune=30409,conversation=30410,session=30411"],
+    ["ops", "project=30101,task=30102,post=30300,propose=30301,vote=30302,invite=30303,mint=30304,dataset=30405,finetune=30409,conversation=30410,session=30411"],
     ["rules", "energy>500"]
   ],
   "content": "{\"desc\":\"Collaborative space for model development, fine-tuning, and AI interactions\", \"img_url\": \"http://image_addr.png\"}",

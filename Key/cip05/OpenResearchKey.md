@@ -33,7 +33,7 @@ Creating a research subspace with specialized operation types:
     ["sid", "0xOR"],
     ["subspace_name", "openresearch"],
     ["category","ai"],
-    ["ops", "paper=30501,annotation=30502,review=30503,task=30504,graph=30505,ai_analysis=30504,discussion=30505"],
+    ["ops", "paper=30501,annotation=30502,review=30503,task=30102,entity=30103,relation=30104,observation=30105,ai_analysis=30504,discussion=30505"],
     ["rules", "energy>500"]
   ],
   "content": "{\"desc\":\"Collaborative research space for literature analysis and discovery\", \"img_url\": \"http://image_addr.png\"}",
@@ -45,11 +45,11 @@ Creating a research subspace with specialized operation types:
 
 | Kind Value | Event Name | Purpose | Key Tags Structure |
 | --- | --- | --- | --- |
-| 30501 | Paper | Submit or index a research paper | ["auth", "d":"subspace_op", "sid", "doi", "paper_type", "authors"] |
-| 30502 | Annotation | Create annotation on paper text | ["auth", "d":"subspace_op", "sid", "paper_id", "position", "type"] |
-| 30503 | Review | Submit structured review of a paper | ["auth", "d":"subspace_op", "sid", "paper_id", "rating", "aspects"] |
-| 30504 | AI_Analysis | Request or submit AI analysis results | ["auth", "d":"subspace_op", "sid", "analysis_type", "paper_ids", "prompt"] |
-| 30505 | Discussion | Create or contribute to research discussions | ["auth", "d":"subspace_op", "sid", "topic", "parent", "references"] |
+| 30501 | Paper | Submit or index a research paper | ["auth", "d":"subspace_op", "op":"paper", "sid", "doi", "paper_type", "authors"] |
+| 30502 | Annotation | Create annotation on paper text | ["auth", "d":"subspace_op", "op":"annotation", "sid", "paper_id", "position", "type"] |
+| 30503 | Review | Submit structured review of a paper | ["auth", "d":"subspace_op", "op":"review", "sid", "paper_id", "rating", "aspects"] |
+| 30504 | AI_Analysis | Request or submit AI analysis results | ["auth", "d":"subspace_op", "op":"ai_analysis", "sid", "analysis_type", "paper_ids", "prompt"] |
+| 30505 | Discussion | Create or contribute to research discussions | ["auth", "d":"subspace_op", "op":"discussion", "sid", "topic", "parent", "references"] |
 
 ## 4. Operation Event Details
 
@@ -140,7 +140,7 @@ Used for research task management within collaborative spaces.
   "created_at": "<Unix timestamp in seconds>",
   "kind": 30102,
   "tags": [
-    ["auth", "action=3", "key=30504", "exp=500000"],
+    ["auth", "action=3", "key=30102", "exp=500000"],
     ["d", "subspace_op"],
     ["sid", "0xOR"],
     ["op", "task"],
@@ -256,7 +256,7 @@ Utilizing token operations for research contributions:
     ["token_symbol", "RCRED"],
     ["token_decimals", "18"],
     ["initial_supply", "1000000"],
-    ["drop_ratio", "30501:5,30502:1,30503:3,30504:2,30505:4,30504:3,30505:1"]
+    ["drop_ratio", "30501:5,30502:1,30503:3,30101:2,30102:4,30504:3,30505:1"]
   ],
   "content": "Research credit token for rewarding contributions to collaborative research",
   "sig": "<ETH signature>"
@@ -278,7 +278,7 @@ Utilizing token operations for research contributions:
     ["d", "subspace_create"],
     ["sid", "0xQC"],
     ["subspace_name", "quantum_computing_review"],
-    ["ops", "paper=30501,annotation=30502,review=30503,task=30504,graph=30505,ai_analysis=30504,discussion=30505"],
+    ["ops", "paper=30501,annotation=30502,review=30503,ai_analysis=30504,discussion=30505,task=30102,entity=30103,relation=30104,observation=30105"],
     ["rules", "energy>300"]
   ],
   "content": "{\"desc\":\"Collaborative literature review on quantum computing advances\"}",
@@ -368,9 +368,9 @@ Utilizing token operations for research contributions:
   "id": "<hash>",
   "pubkey": "<project_lead_pubkey>",
   "created_at": "<timestamp>",
-  "kind": 30504,
+  "kind": 30102,
   "tags": [
-    ["auth", "action=3", "key=30504", "exp=500000"],
+    ["auth", "action=3", "key=30102", "exp=500000"],
     ["d", "subspace_op"],
     ["sid", "0xQC"],
     ["op", "task"],
@@ -399,26 +399,6 @@ Utilizing token operations for research contributions:
     ["related_papers", "<new_paper_hash>"]
   ],
   "content": "{\"completion_notes\":\"Successfully replicated the experiment with 98% confidence interval\",\"data_url\":\"ipfs://bafy...\"}",
-  "sig": "<signature>"
-}
-
-// 3. Reward research contributions
-{
-  "id": "<hash>",
-  "pubkey": "<project_lead_pubkey>",
-  "created_at": "<timestamp>",
-  "kind": 30321,
-  "tags": [
-    ["auth", "action=3", "key=30321", "exp=500000"],
-    ["d", "subspace_op"],
-    ["sid", "0xQC"],
-    ["op", "transfer"],
-    ["from", "<project_fund_pubkey>"],
-    ["to", "<researcher_pubkey>"],
-    ["symbol", "RCRED"],
-    ["amount", "500"]
-  ],
-  "content": "Research credit reward for successful experiment replication",
   "sig": "<signature>"
 }
 ``` 

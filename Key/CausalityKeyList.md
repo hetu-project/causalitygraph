@@ -68,8 +68,8 @@ A set of keys can be converted into VLC, representing causality
 
 | Kind Value | Event Name | Purpose | Key Tags Structure |
 | --- | --- | --- | --- |
-| 30501 | Paper | Submit or index a research paper | ["auth", "d":"subspace_op", "sid", "doi", "paper_type", "authors"] |
-| 30502 | Annotation | Create annotation on paper text | ["auth", "d":"subspace_op", "sid", "paper_id", "position", "type"] |
-| 30503 | Review | Submit structured review of a paper | ["auth", "d":"subspace_op", "sid", "paper_id", "rating", "aspects"] |
-| 30504 | AI_Analysis | Request or submit AI analysis results | ["auth", "d":"subspace_op", "sid", "analysis_type", "paper_ids", "prompt"] |
-| 30505 | Discussion | Create or contribute to research discussions | ["auth", "d":"subspace_op", "sid", "topic", "parent", "references"] |
+| 30501 | Paper | Submit or index a research paper | ["auth", "d":"subspace_op", "op":"paper", "sid", "doi", "paper_type", "authors"] |
+| 30502 | Annotation | Create annotation on paper text | ["auth", "d":"subspace_op", "op":"annotation", "sid", "paper_id", "position", "type"] |
+| 30503 | Review | Submit structured review of a paper | ["auth", "d":"subspace_op", "op":"review", "sid", "paper_id", "rating", "aspects"] |
+| 30504 | AI_Analysis | Request or submit AI analysis results | ["auth", "d":"subspace_op", "op":"ai_analysis", "sid", "analysis_type", "paper_ids", "prompt"] |
+| 30505 | Discussion | Create or contribute to research discussions | ["auth", "d":"subspace_op", "op":"discussion", "sid", "topic", "parent", "references"] |
