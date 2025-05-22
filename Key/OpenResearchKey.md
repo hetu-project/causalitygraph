@@ -33,7 +33,7 @@ Creating a research subspace with specialized operation types:
     ["sid", "0xOR"],
     ["subspace_name", "openresearch"],
     ["category","ai"],
-    ["ops", "paper=30501,annotation=30502,review=30503,task=30504,graph=30505,ai_analysis=30506,discussion=30507"],
+    ["ops", "paper=30501,annotation=30502,review=30503,task=30504,graph=30505,ai_analysis=30504,discussion=30505"],
     ["rules", "energy>500"]
   ],
   "content": "{\"desc\":\"Collaborative research space for literature analysis and discovery\", \"img_url\": \"http://image_addr.png\"}",
@@ -48,10 +48,8 @@ Creating a research subspace with specialized operation types:
 | 30501 | Paper | Submit or index a research paper | ["auth", "d":"subspace_op", "sid", "doi", "paper_type", "authors"] |
 | 30502 | Annotation | Create annotation on paper text | ["auth", "d":"subspace_op", "sid", "paper_id", "position", "type"] |
 | 30503 | Review | Submit structured review of a paper | ["auth", "d":"subspace_op", "sid", "paper_id", "rating", "aspects"] |
-| 30504 | Task | Create or update research tasks | ["auth", "d":"subspace_op", "sid", "task_type", "assignee", "deadline"] |
-| 30505 | Graph | Add or update knowledge graph elements | ["auth", "d":"subspace_op", "sid", "node_type", "edge_type", "references"] |
-| 30506 | AI_Analysis | Request or submit AI analysis results | ["auth", "d":"subspace_op", "sid", "analysis_type", "paper_ids", "prompt"] |
-| 30507 | Discussion | Create or contribute to research discussions | ["auth", "d":"subspace_op", "sid", "topic", "parent", "references"] |
+| 30504 | AI_Analysis | Request or submit AI analysis results | ["auth", "d":"subspace_op", "sid", "analysis_type", "paper_ids", "prompt"] |
+| 30505 | Discussion | Create or contribute to research discussions | ["auth", "d":"subspace_op", "sid", "topic", "parent", "references"] |
 
 ## 4. Operation Event Details
 
@@ -131,9 +129,41 @@ Used for structured reviews of research papers.
 }
 ```
 
-### 4.4 Task Event (Kind 30504)
+### 4.4 Task Event (Reused Kind 30102)
 
 Used for research task management within collaborative spaces.
+
+```json
+{
+  "id": "<32 bytes lowercase hex-encoded sha256 hash of the serialized event data>",
+  "pubkey": "<32 bytes lowercase hex-encoded ETH address of the event creator>",
+  "created_at": "<Unix timestamp in seconds>",
+  "kind": 30102,
+  "tags": [
+    ["auth", "action=3", "key=30504", "exp=500000"],
+    ["d", "subspace_op"],
+    ["sid", "0xOR"],
+    ["op", "task"],
+    ["task_type", "literature_review"],
+    ["assignee", "<assignee_address>"],
+    ["deadline", "<unix_timestamp>"],
+    ["status", "in_progress"],
+    ["priority", "high"],
+  ],
+  "content": "{\"title\":\"Review recent advances in quantum computing algorithms\",\"description\":\"Compile a comprehensive review of papers published in the last 2 years on quantum computing algorithms for optimization problems.\",\"deliverables\":\"Summary report with comparative analysis\",\"related_papers\", \"<paper_id1>,<paper_id2>\"}",
+  "sig": "<ETH signature>"
+}
+```
+
+### 4.5 Graph Event (Reused Kind 30103/30104)
+
+Used to build and maintain the research knowledge graph.
+
+Please refer to [CommonGraphKey](./CommonGraphKey.md) Entity and Relation event defination.
+
+### 4.6 AI_Analysis Event (Kind 30504)
+
+Used to request and store AI-generated analysis of research papers.
 
 ```json
 {
@@ -143,57 +173,6 @@ Used for research task management within collaborative spaces.
   "kind": 30504,
   "tags": [
     ["auth", "action=3", "key=30504", "exp=500000"],
-    ["d", "subspace_op"],
-    ["sid", "0xOR"],
-    ["op", "task"],
-    ["task_type", "literature_review"],
-    ["assignee", "<assignee_pubkey>"],
-    ["deadline", "<unix_timestamp>"],
-    ["status", "in_progress"],
-    ["priority", "high"],
-    ["related_papers", "<paper_id1>,<paper_id2>"]
-  ],
-  "content": "{\"title\":\"Review recent advances in quantum computing algorithms\",\"description\":\"Compile a comprehensive review of papers published in the last 2 years on quantum computing algorithms for optimization problems.\",\"deliverables\":\"Summary report with comparative analysis\"}",
-  "sig": "<ETH signature>"
-}
-```
-
-### 4.5 Graph Event (Kind 30505)
-
-Used to build and maintain the research knowledge graph.
-
-```json
-{
-  "id": "<32 bytes lowercase hex-encoded sha256 hash of the serialized event data>",
-  "pubkey": "<32 bytes lowercase hex-encoded ETH address of the event creator>",
-  "created_at": "<Unix timestamp in seconds>",
-  "kind": 30505,
-  "tags": [
-    ["auth", "action=2", "key=30505", "exp=500000"],
-    ["d", "subspace_op"],
-    ["sid", "0xOR"],
-    ["op", "graph"],
-    ["node_type", "concept"],
-    ["edge_type", "relates_to"],
-    ["references", "<paper_id1>,<paper_id2>"]
-  ],
-  "content": "{\"source_node\":\"quantum_entanglement\",\"target_node\":\"quantum_teleportation\",\"relationship\":\"enables\",\"weight\":0.85,\"description\":\"Quantum entanglement is a fundamental prerequisite for quantum teleportation protocols.\"}",
-  "sig": "<ETH signature>"
-}
-```
-
-### 4.6 AI_Analysis Event (Kind 30506)
-
-Used to request and store AI-generated analysis of research papers.
-
-```json
-{
-  "id": "<32 bytes lowercase hex-encoded sha256 hash of the serialized event data>",
-  "pubkey": "<32 bytes lowercase hex-encoded ETH address of the event creator>",
-  "created_at": "<Unix timestamp in seconds>",
-  "kind": 30506,
-  "tags": [
-    ["auth", "action=3", "key=30506", "exp=500000"],
     ["d", "subspace_op"],
     ["sid", "0xOR"],
     ["op", "ai_analysis"],
@@ -206,7 +185,7 @@ Used to request and store AI-generated analysis of research papers.
 }
 ```
 
-### 4.7 Discussion Event (Kind 30507)
+### 4.7 Discussion Event (Kind 30505)
 
 Used for threaded discussions about research topics.
 
@@ -215,9 +194,9 @@ Used for threaded discussions about research topics.
   "id": "<32 bytes lowercase hex-encoded sha256 hash of the serialized event data>",
   "pubkey": "<32 bytes lowercase hex-encoded ETH address of the event creator>",
   "created_at": "<Unix timestamp in seconds>",
-  "kind": 30507,
+  "kind": 30505,
   "tags": [
-    ["auth", "action=2", "key=30507", "exp=500000"],
+    ["auth", "action=2", "key=30505", "exp=500000"],
     ["d", "subspace_op"],
     ["sid", "0xOR"],
     ["op", "discussion"],
@@ -277,7 +256,7 @@ Utilizing token operations for research contributions:
     ["token_symbol", "RCRED"],
     ["token_decimals", "18"],
     ["initial_supply", "1000000"],
-    ["drop_ratio", "30501:5,30502:1,30503:3,30504:2,30505:4,30506:3,30507:1"]
+    ["drop_ratio", "30501:5,30502:1,30503:3,30504:2,30505:4,30504:3,30505:1"]
   ],
   "content": "Research credit token for rewarding contributions to collaborative research",
   "sig": "<ETH signature>"
@@ -299,7 +278,7 @@ Utilizing token operations for research contributions:
     ["d", "subspace_create"],
     ["sid", "0xQC"],
     ["subspace_name", "quantum_computing_review"],
-    ["ops", "paper=30501,annotation=30502,review=30503,task=30504,graph=30505,ai_analysis=30506,discussion=30507"],
+    ["ops", "paper=30501,annotation=30502,review=30503,task=30504,graph=30505,ai_analysis=30504,discussion=30505"],
     ["rules", "energy>300"]
   ],
   "content": "{\"desc\":\"Collaborative literature review on quantum computing advances\"}",
@@ -348,9 +327,9 @@ Utilizing token operations for research contributions:
   "id": "<hash>",
   "pubkey": "<researcher_pubkey>",
   "created_at": "<timestamp>",
-  "kind": 30506,
+  "kind": 30504,
   "tags": [
-    ["auth", "action=3", "key=30506", "exp=500000"],
+    ["auth", "action=3", "key=30504", "exp=500000"],
     ["d", "subspace_op"],
     ["sid", "0xQC"],
     ["op", "ai_analysis"],

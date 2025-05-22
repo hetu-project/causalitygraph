@@ -37,9 +37,9 @@ A set of keys can be converted into VLC, representing causality
 | Kind Value | Event Name   | Purpose                                      | Key Tags Structure |
 |------------|-------------|----------------------------------------------|--------------------|
 | 30101      | Project     | Define a project within a subspace           | ["auth", "d":"subspace_op", "op":"project", "sid", "project_id", "name", "desc", "members", "status"] |
-| 30102      | Task        | Task belonging to a project                   | ["auth", "d":"subspace_op", "op":"task", "sid", "project_id", "task_id", "title", "assignee", "status", "deadline"] |
+| 30102      | Task        | Task belonging to a project                   | ["auth", "d":"subspace_op", "op":"task", "sid", "project_id", "task_id", "title", "assignee", "status", "deadline", "priority"] |
 | 30103      | Entity      | Define an entity node in a knowledge graph    | ["auth", "d":"subspace_op", "op":"entity", "sid", "entity_name", "entity_type"] |
-| 30104      | Relation    | Define a relation between two entities        | ["auth", "d":"subspace_op", "op":"relation", "sid", "from", "to", "relation_type", "context"] |
+| 30104      | Relation    | Define a relation between two entities        | ["auth", "d":"subspace_op", "op":"relation", "sid", "from", "to", "relation_type", "context", "weight", "description"] |
 | 30105      | Observation | Attach an observation to an entity            | ["auth", "d":"subspace_op", "op":"observation", "sid", "entity_name", "observation"] |
 
 ### ModelGraph Subspace (CIP 03)
@@ -71,7 +71,5 @@ A set of keys can be converted into VLC, representing causality
 | 30501 | Paper | Submit or index a research paper | ["auth", "d":"subspace_op", "sid", "doi", "paper_type", "authors"] |
 | 30502 | Annotation | Create annotation on paper text | ["auth", "d":"subspace_op", "sid", "paper_id", "position", "type"] |
 | 30503 | Review | Submit structured review of a paper | ["auth", "d":"subspace_op", "sid", "paper_id", "rating", "aspects"] |
-| 30504 | Task | Create or update research tasks | ["auth", "d":"subspace_op", "sid", "task_type", "assignee", "deadline"] |
-| 30505 | Graph | Add or update knowledge graph elements | ["auth", "d":"subspace_op", "sid", "node_type", "edge_type", "references"] |
-| 30506 | AI_Analysis | Request or submit AI analysis results | ["auth", "d":"subspace_op", "sid", "analysis_type", "paper_ids", "prompt"] |
-| 30507 | Discussion | Create or contribute to research discussions | ["auth", "d":"subspace_op", "sid", "topic", "parent", "references"] |
+| 30504 | AI_Analysis | Request or submit AI analysis results | ["auth", "d":"subspace_op", "sid", "analysis_type", "paper_ids", "prompt"] |
+| 30505 | Discussion | Create or contribute to research discussions | ["auth", "d":"subspace_op", "sid", "topic", "parent", "references"] |

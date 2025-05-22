@@ -16,9 +16,9 @@ It introduces a set of event types that can be used in any subspace, allowing fo
 | Kind Value | Event Name   | Purpose                                      | Key Tags Structure |
 |------------|-------------|----------------------------------------------|--------------------|
 | 30101      | Project     | Define a project within a subspace           | ["auth", "d":"subspace_op", "op":"project", "sid", "project_id", "name", "desc", "members", "status"] |
-| 30102      | Task        | Task belonging to a project                   | ["auth", "d":"subspace_op", "op":"task", "sid", "project_id", "task_id", "title", "assignee", "status", "deadline", ...] |
+| 30102      | Task        | Task belonging to a project                   | ["auth", "d":"subspace_op", "op":"task", "sid", "project_id", "task_id", "title", "assignee", "status", "deadline", "priority", ...] |
 | 30103      | Entity      | Define an entity node in a knowledge graph    | ["auth", "d":"subspace_op", "op":"entity", "sid", "entity_name", "entity_type"] |
-| 30104      | Relation    | Define a relation between two entities        | ["auth", "d":"subspace_op", "op":"relation", "sid", "from", "to", "relation_type", "context"] |
+| 30104      | Relation    | Define a relation between two entities        | ["auth", "d":"subspace_op", "op":"relation", "sid", "from", "to", "relation_type", "context", "weight", "description"] |
 | 30105      | Observation | Attach an observation to an entity            | ["auth", "d":"subspace_op", "op":"observation", "sid", "entity_name", "observation"] |
 
 ### 2.1 Project Event (Kind 30101)
@@ -61,7 +61,8 @@ It introduces a set of event types that can be used in any subspace, allowing fo
     ["title", "Literature Review"],
     ["assignee", "0xBob"],
     ["status", "in_progress"],
-    ["deadline", "1712345678"]
+    ["deadline", "1712345678"],
+    ["priority", "high"]
   ],
   "content": "Review recent papers on quantum NLP.",
   "sig": "<ETH signature>"
@@ -102,7 +103,9 @@ It introduces a set of event types that can be used in any subspace, allowing fo
     ["sid", "0xOR"],
     ["from", "John_Smith"],
     ["to", "Anthropic"],
-    ["relation_type", "works_at"]
+    ["relation_type", "works_at"],
+    ["weight", "0.85"],
+    ["description", "{}"]
   ],
   "content": "",
   "sig": "<ETH signature>"
@@ -171,7 +174,8 @@ It introduces a set of event types that can be used in any subspace, allowing fo
     ["title", "Literature Review"],
     ["assignee", "0xBob"],
     ["status", "in_progress"],
-    ["deadline", "1712345678"]
+    ["deadline", "1712345678"],
+    ["priority", "high"]
   ],
   "content": "Review recent papers on quantum NLP.",
   "sig": "<ETH signature>"
@@ -212,7 +216,9 @@ It introduces a set of event types that can be used in any subspace, allowing fo
     ["sid", "0xOR"],
     ["from", "John_Smith"],
     ["to", "Anthropic"],
-    ["relation_type", "works_at"]
+    ["relation_type", "works_at"],
+    ["weight", "0.85"],
+    ["description", "{}"]
   ],
   "content": "",
   "sig": "<ETH signature>"
