@@ -175,9 +175,9 @@ This event represents the consumption/burning of Power. Once burned, Power is pe
 - `ref`: Reference to the event associated with this action
 - `balance`: Remaining Power balance after burn (for tracking purposes)
 
-#### 5.1.4 Power Transfer Event (Kind 30323)
+#### 5.1.4 Flux20 Transfer Event (Kind 30323)
 
-This event represents the transfer of Power between accounts. Only applicable when Flux Power is marked as transferable.
+This event represents the transfer of Flux20 between accounts. Only applicable when Flux20 is marked as transferable.
 
 ```json
 {
@@ -190,12 +190,14 @@ This event represents the transfer of Power between accounts. Only applicable wh
     ["d", "subspace_op"],
     ["sid", "<subspace_id>"],
     ["op", "flux20_transfer"],
-    ["symbol", "POWER"],
+    ["symbol", "FLUX"],
     ["from", "<sender_pubkey>"],
     ["to", "<recipient_pubkey>"],
-    ["amount", "1000"]
+    ["amount", "1000"],
+    ["to_sid", "<target_subspace_id>"],
+    ["bridge_ref", "<bridge_event_or_proof>"]
   ],
-  "content": "Transfer Flux Power to another account",
+  "content": "Transfer Flux to another account",
   "sig": "<ETH signature>"
 }
 ```
@@ -209,6 +211,11 @@ This event represents the transfer of Power between accounts. Only applicable wh
 - `from`: Sender's ETH public key
 - `to`: Recipient's ETH public key
 - `amount`: Amount of Power to transfer
+
+**Cross-subspace fields (optional):**
+
+- `to_sid`: Target subspace ID when performing a cross-subspace transfer. If empty, transfer is inside the same subspace.
+- `bridge_ref`: Reference (event id or proof) to an off-chain bridge/relayer operation that completes the cross-subspace transfer. Relayers should provide this proof when finalizing the transfer.
 
 ### 5.2 FLUX21 Soulbound Token (SBT) Protocol (Non-Transferable Reputation)
 
@@ -346,6 +353,46 @@ This event updates an existing Credit or Bond SBT to reflect new achievements, s
 - `reason`: Reason for update
 - `evidence`: Reference to evidence event or transaction hash
 - `content`: JSON structure containing update reason, evidence summary, and timestamp
+
+#### 5.1.5 Flux20 Withdraw Event (Kind 30324)
+
+This event represents a withdrawal request to convert transferable Flux20 balance into an external on-chain ERC20 (or other) representation. It follows the same `subspace_op` structure and can be used to request, track and finalize asset exits (internal -> external).
+
+```json
+{
+  "id": "<32 bytes lowercase hex-encoded sha256 hash of the serialized event data>",
+  "pubkey": "<32 bytes lowercase hex-encoded ETH address of the requester>",
+  "created_at": 1710000007,
+  "kind": 30324,
+  "tags": [
+    ["auth", "action=2", "key=30324", "exp=0"],
+    ["d", "subspace_op"],
+    ["sid", "<subspace_id>"],
+    ["op", "flux20_withdraw"],
+    ["symbol", "Flux"],
+    ["p", "<owner_pubkey>"],
+    ["amount", "1000"],
+    ["to_chain", "ethereum|arbitrum|other"],
+    ["to_address", "<external_recipient_address>"],
+    ["fee", "<fee_amount>"],
+    ["ref", "<withdraw_request_id>"],
+    ["status", "requested|pending|completed|failed"],
+    ["proof", "<onchain_tx_hash_or_receipt>"]
+  ],
+  "content": "Withdraw request: convert transferable Flux to external ERC20 on target chain",
+  "sig": "<ETH signature>"
+}
+```
+
+**Field Description:**
+
+- `op`: "flux20_withdraw" - Operation identifier for withdrawal requests
+- `to_chain`: Target external chain or system to receive the exchanged asset
+- `to_address`: External address on the target chain to receive the tokens
+- `fee`: Withdraw fee (if applicable)
+- `ref`: Local withdraw request id for correlation
+- `status`: Withdraw request lifecycle state
+- `proof`: When completed, on-chain tx hash or receipt proving mint/transfer on external chain
 
 ### Query Interface
 

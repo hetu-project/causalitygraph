@@ -58,15 +58,16 @@ A set of keys can be converted into VLC, representing causality
 
 ### Flux Credit Operations (CIP 04)
 
-| Kind Value | Event Name            | Purpose                               | Key Tags Structure                                                                                                                            |
-| ---------- | --------------------- | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| 30320      | Flux Power Issue      | Create and configure a new Flux Power | ["auth", "d":"subspace_op", "op":"flux20_issue", "sid", "symbol", "name", "total_supply", "decimals", "transferable", "mintable"]             |
-| 30321      | Flux Power Allocation | Allocate Power to recipients          | ["auth", "d":"subspace_op", "op":"flux20_allocation", "sid", "symbol", "p", "amount", "purpose", "vesting"]                                   |
-| 30322      | Flux Power Burn       | Consume/burn Power                    | ["auth", "d":"subspace_op", "op":"flux20_burn", "sid", "symbol", "amount", "action", "ref", "balance"]                                        |
-| 30323      | Flux Power Transfer   | Transfer Power between accounts       | ["auth", "d":"subspace_op", "op":"flux20_transfer", "sid", "symbol", "from", "to", "amount"]                                                  |
-| 30330      | Flux Credit SBT       | Issue Credit SBT for reputation       | ["auth", "d":"subspace_op", "op":"flux21_credit", "sid", "p", "symbol", "score", "level", "category", "transferable"]                         |
-| 30331      | Flux Bond SBT         | Issue Bond SBT for staking            | ["auth", "d":"subspace_op", "op":"flux21_bond", "sid", "p", "symbol", "amount", "purpose", "start_time", "expiry", "penalty", "transferable"] |
-| 30332      | Flux SBT Update       | Update existing Credit or Bond SBT    | ["auth", "d":"subspace_op", "op":"flux21_update", "sid", "e", "p", "symbol", "new_score", "new_amount", "new_level", "reason", "evidence"]    |
+| Kind Value | Event Name            | Purpose                                        | Key Tags Structure                                                                                                                            |
+| ---------- | --------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| 30320      | Flux Power Issue      | Create and configure a new Flux Power          | ["auth", "d":"subspace_op", "op":"flux20_issue", "sid", "symbol", "name", "total_supply", "decimals", "transferable", "mintable"]             |
+| 30321      | Flux Power Allocation | Allocate Power to recipients                   | ["auth", "d":"subspace_op", "op":"flux20_allocation", "sid", "symbol", "p", "amount", "purpose", "vesting"]                                   |
+| 30322      | Flux Power Burn       | Consume/burn Power                             | ["auth", "d":"subspace_op", "op":"flux20_burn", "sid", "symbol", "amount", "action", "ref", "balance"]                                        |
+| 30323      | Flux20 Transfer       | Transfer transferable Flux20 between accounts  | ["auth", "d":"subspace_op", "op":"flux20_transfer", "sid", "symbol", "from", "to", "amount","to_sid","bridge_ref"]                            |
+| 30324      | Flux20 Withdraw       | Convert transferable Flux20 balance into ERC20 | ["auth", "d":"subspace_op", "op":"flux20_withdraw", "sid", "symbol", "p", "to_chain", "amount","to_address","fee","ref","status", "proof"]    |
+| 30330      | Flux Credit SBT       | Issue Credit SBT for reputation                | ["auth", "d":"subspace_op", "op":"flux21_credit", "sid", "p", "symbol", "score", "level", "category", "transferable"]                         |
+| 30331      | Flux Bond SBT         | Issue Bond SBT for staking                     | ["auth", "d":"subspace_op", "op":"flux21_bond", "sid", "p", "symbol", "amount", "purpose", "start_time", "expiry", "penalty", "transferable"] |
+| 30332      | Flux SBT Update       | Update existing Credit or Bond SBT             | ["auth", "d":"subspace_op", "op":"flux21_update", "sid", "e", "p", "symbol", "new_score", "new_amount", "new_level", "reason", "evidence"]    |                                                  |
 
 ### OpenResearch Subspace (CIP 05)
 
@@ -103,3 +104,13 @@ A set of keys can be converted into VLC, representing causality
 | 30701      | CommunityInvite | Invite user to a community      | ["auth", "d":"subspace_op", "op":"community_invite", "sid", "community_id", "inviter_id", "invitee_id", "method"] |
 | 30702      | ChannelCreate   | Create a channel in a community | ["auth", "d":"subspace_op", "op":"channel_create", "sid", "community_id", "channel_id", "name", "type"]           |
 | 30703      | ChannelMessage  | Post a message in a channel     | ["auth", "d":"subspace_op", "op":"channel_message", "sid", "channel_id", "user_id", "content", "reply_to"]        |
+
+### Intent publish & Task Mining (CIP 08)
+
+| Kind Value | Event Name         | Purpose                                  | Key Tags Structure                                                                                                                                                       |
+| ---------- | ------------------ | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 30400      | Direct Intent Task | Publish a direct task intent             | ["auth", "d":"subspace_op", "op":"flux_task_publish_direct", "sid", "power_cost", "reward", "deadline", "category", "difficulty", "p"]                                   |
+| 30401      | Causal Graph Task  | Publish a task describing a causal graph | ["auth", "d":"subspace_op", "op":"flux_task_publish_causal", "sid", "power_cost", "graph", "e", "p"]                                                                     |
+| 30402      | Single Event Task  | Publish a task targeting a single event  | ["auth", "d":"subspace_op", "op":"flux_task_publish_single", "sid", "power_cost", "reward", "deadline", "category", "difficulty", "e", "p", "input_type", "output_type"] |
+| 30403      | Task Response      | Submit a response/solution to a task     | ["auth", "d":"subspace_op", "op":"flux_task_response", "sid", "e", "p", "status", "power_cost", "quality_score"]                                                         |
+| 30404      | Task Evaluation    | Evaluate a submitted response            | ["auth", "d":"subspace_op", "op":"flux_task_evaluation", "sid", "e", "re", "p", "score", "status", "power_cost"]       
