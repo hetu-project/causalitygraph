@@ -6,11 +6,11 @@ This document defines the Intent publish and Task Mining protocol family for the
 
 The Task Mining protocol supports three task publishing types and two follow-up flows:
 
-- Direct Intent Task (Kind 30400)
-- Causal Graph Task (Kind 30401)
-- Simple Event / Single-Event Task (Kind 30402)
-- Task Response (Kind 30403)
-- Task Evaluation (Kind 30404)
+- Direct Intent Task (Kind 30800)
+- Causal Graph Task (Kind 30801)
+- Simple Event / Single-Event Task (Kind 30802)
+- Task Response (Kind 30803)
+- Task Evaluation (Kind 30804)
 
 All events in this CIP follow the Nostr / CausalityKey event base used elsewhere:
 
@@ -47,7 +47,7 @@ Common tag semantics
 
 All kinds use the `subspace_op` structure and include `sid` and `op` tags. The `op` values are normative strings implementers should match when parsing.
 
-## 30400 — Direct Intent Task (op: `flux_task_publish_direct`)
+## 30800 — Direct Intent Task (op: `flux_task_publish_direct`)
 
 Purpose: Publish a direct task intent with explicit requirements and reward. Suitable for computational, creative or human-in-the-loop tasks where the creator specifies inputs, outputs, scoring and deadlines.
 
@@ -61,15 +61,15 @@ Typical tags:
 - `difficulty`: `easy|medium|hard`
 - `p`: optional list of invited participant pubkeys
 
-Example event (kind 30400):
+Example event (kind 30800):
 
 ```json
 {
-  "kind": 30400,
+  "kind": 30800,
   "pubkey": "<task_creator_pubkey>",
   "created_at": 1710000006,
   "tags": [
-    ["auth", "action=2", "key=30400", "exp=0"],
+    ["auth", "action=2", "key=30800", "exp=0"],
     ["d", "subspace_op"],
     ["sid", "<subspace_id>"],
     ["op", "flux_task_publish_direct"],
@@ -84,7 +84,7 @@ Example event (kind 30400):
 }
 ```
 
-## 30401 — Causal Graph Task (op: `flux_task_publish_causal`)
+## 30801 — Causal Graph Task (op: `flux_task_publish_causal`)
 
 Purpose: Describe a task whose inputs or outputs are a causal graph (set of events and relations). Useful when scoring or task semantics depend on the causal structure of multiple events.
 
@@ -93,15 +93,15 @@ Typical tags:
 - `auth`, `d:subspace_op`, `sid`, `op:flux_task_publish_causal`
 - `power_cost`, `graph` (reference/hash to causal graph payload), `e` (root/related events), `p` (participant pubkeys)
 
-Example event (kind 30401):
+Example event (kind 30801):
 
 ```json
 {
-  "kind": 30401,
+  "kind": 30801,
   "pubkey": "<task_creator_pubkey>",
   "created_at": 1710000007,
   "tags": [
-    ["auth", "action=2", "key=30401", "exp=0"],
+    ["auth", "action=2", "key=30801", "exp=0"],
     ["d", "subspace_op"],
     ["sid", "<subspace_id>"],
     ["op", "flux_task_publish_causal"],
@@ -117,7 +117,7 @@ Example event (kind 30401):
 }
 ```
 
-## 30402 — Single Event Task (op: `flux_task_publish_single`)
+## 30802 — Single Event Task (op: `flux_task_publish_single`)
 
 Purpose: Publish a task that targets a single existing event (e.g., ask to analyze, summarize or extend an event). This is a lightweight pattern for targeted micro-tasks.
 
@@ -126,15 +126,15 @@ Typical tags:
 - `auth`, `d:subspace_op`, `sid`, `op:flux_task_publish_single`
 - `power_cost`, `reward`, `deadline`, `category`, `difficulty`, `e` (target event), `p` (target author), `input_type`, `output_type`
 
-Example event (kind 30402):
+Example event (kind 30802):
 
 ```json
 {
-  "kind": 30402,
+  "kind": 30802,
   "pubkey": "<task_creator_pubkey>",
   "created_at": 1710000008,
   "tags": [
-    ["auth", "action=2", "key=30402", "exp=0"],
+    ["auth", "action=2", "key=30802", "exp=0"],
     ["d", "subspace_op"],
     ["sid", "<subspace_id>"],
     ["op", "flux_task_publish_single"],
@@ -153,7 +153,7 @@ Example event (kind 30402):
 }
 ```
 
-## 30403 — Task Response (op: `flux_task_response`)
+## 30803 — Task Response (op: `flux_task_response`)
 
 Purpose: A participant submits a response or solution for a published task. Responses should reference the originating task event via `e` and include any necessary evidence in `content`.
 
@@ -162,15 +162,15 @@ Typical tags:
 - `auth`, `d:subspace_op`, `sid`, `op:flux_task_response`
 - `e` (task id), `p` (task creator), `status` (`submitted|completed|failed`), `power_cost` (response cost), `quality_score` (optional self-assessed)
 
-Example event (kind 30403):
+Example event (kind 30803):
 
 ```json
 {
-  "kind": 30403,
+  "kind": 30803,
   "pubkey": "<worker_pubkey>",
   "created_at": 1710000009,
   "tags": [
-    ["auth", "action=2", "key=30403", "exp=0"],
+    ["auth", "action=2", "key=30803", "exp=0"],
     ["d", "subspace_op"],
     ["sid", "<subspace_id>"],
     ["op", "flux_task_response"],
@@ -185,7 +185,7 @@ Example event (kind 30403):
 }
 ```
 
-## 30404 — Task Evaluation (op: `flux_task_evaluation`)
+## 30804 — Task Evaluation (op: `flux_task_evaluation`)
 
 Purpose: Validators evaluate submitted responses. Evaluations reference both the task event and the response event, and produce a score, status, and optional feedback.
 
@@ -194,15 +194,15 @@ Typical tags:
 - `auth`, `d:subspace_op`, `sid`, `op:flux_task_evaluation`
 - `e` (task id), `re` (response id), `p` (worker pubkey), `score`, `status` (`approved|rejected|needs_revision`), `power_cost` (evaluation cost)
 
-Example event (kind 30404):
+Example event (kind 30804):
 
 ```json
 {
-  "kind": 30404,
+  "kind": 30804,
   "pubkey": "<validator_pubkey>",
   "created_at": 1710000010,
   "tags": [
-    ["auth", "action=2", "key=30404", "exp=0"],
+    ["auth", "action=2", "key=30804", "exp=0"],
     ["d", "subspace_op"],
     ["sid", "<subspace_id>"],
     ["op", "flux_task_evaluation"],
